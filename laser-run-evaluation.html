@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#0b1120" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Laser Run EPS" />
+  <title>Laser Run — Évaluation EPS</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="apple-touch-icon.png" sizes="1024x1024" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="1024x1024" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="167x167" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon.png" />
+  <style>
+    /* =============================================================================
+       Palette — thème sombre unique
+       ============================================================================= */
+    :root {
+      --bg: #0b1120;
+      --bg-grad-mid: #111827;
+      --surface: rgba(30, 41, 59, 0.88);
+      --surface-solid: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: rgba(148, 163, 184, 0.15);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.5);
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --success: #34d399;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --danger: #f87171;
+      --danger-bg: rgba(248, 113, 113, 0.12);
+      --warn: #fbbf24;
+      --wave-a: #60a5fa;
+      --wave-b: #a78bfa;
+      --wave-c: #fb923c;
+      --wave-d: #2dd4bf;
+      --wave-e: #f472b6;
+      --wave-f: #facc15;
+      --timer-bg: linear-gradient(145deg, #020617 0%, #0f172a 50%, #020617 100%);
+      --timer-fg: #f8fafc;
+      --shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+      --shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.35);
+      --radius: 16px;
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      --tir-bg: #1a2332;
+      --tir-bg-hover: #243044;
+      --tir-fg: #cbd5e1;
+      --tir-border: #334155;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%; margin: 0; font-family: var(--font); color: var(--text);
+      -webkit-tap-highlight-color: transparent;
+      background: var(--bg);
+      background-image: linear-gradient(165deg, var(--bg) 0%, var(--bg-grad-mid) 48%, var(--bg) 100%);
+      background-attachment: fixed;
+    }
+    body {
+      transition: background 0.4s ease, background-image 0.4s ease;
+    }
+    /* Teinte de toute la page selon la vague d’évaluation sélectionnée */
+    body[data-active-wave="A"] {
+      background-image: linear-gradient(165deg, rgba(96, 165, 250, 0.22) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
+    }
+    body[data-active-wave="B"] {
+      background-image: linear-gradient(165deg, rgba(167, 139, 250, 0.22) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
+    }
+    body[data-active-wave="C"] {
+      background-image: linear-gradient(165deg, rgba(251, 146, 60, 0.2) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
+    }
+    body[data-active-wave="D"] {
+      background-image: linear-gradient(165deg, rgba(45, 212, 191, 0.2) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
+    }
+    body[data-active-wave="E"] {
+      background-image: linear-gradient(165deg, rgba(244, 114, 182, 0.2) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
+    }
+    body[data-active-wave="F"] {
+      background-image: linear-gradient(165deg, rgba(250, 204, 21, 0.18) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
+    }
+
+    /* Barre d’outils */
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 12px 16px;
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    }
+    .toolbar h1 {
+      font-size: 1.05rem; margin: 0; flex: 1 1 100%;
+      font-weight: 800; letter-spacing: -0.02em;
+      background: linear-gradient(105deg, #f8fafc 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    @media (min-width: 700px) {
+      .toolbar h1 { flex: 0 1 auto; font-size: 1.2rem; }
+    }
+    .btn {
+      border: none; border-radius: 10px; padding: 12px 16px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; background: var(--accent); color: #fff; min-height: 48px; touch-action: manipulation;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn.secondary { background: var(--surface); color: var(--accent); border: 2px solid var(--accent); }
+    .btn.danger { background: var(--danger); }
+    .btn.small { padding: 8px 12px; min-height: 44px; font-size: 0.9rem; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    /* Passage actif (1 ou 2) : deux boutons bien visibles, sans badge */
+    .btn.passage-toggle { min-height: 52px; padding: 12px 18px; font-size: 1.05rem; font-weight: 800; touch-action: manipulation; }
+    .btn.active-passage { background: var(--accent); color: #fff; border-color: var(--accent); }
+    /* Plein écran + passages : uniquement sur l’onglet Évaluation */
+    .toolbar-eval-only {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      width: 100%;
+    }
+    @media (min-width: 700px) {
+      .toolbar-eval-only { width: auto; flex: 0 1 auto; }
+    }
+    /* Vague cible sélectionnée pour le clic depuis la liste complète */
+    .prep-target.selected { outline: 3px solid var(--warn); box-shadow: 0 0 0 2px var(--surface); }
+
+    .manual-import { margin-top: 14px; }
+    .manual-import label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.95rem; }
+    .manual-import textarea {
+      width: 100%; min-height: 120px; padding: 10px; font-size: 1rem; font-family: inherit;
+      border: 2px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); resize: vertical;
+    }
+
+    .tabs {
+      display: flex; gap: 6px; flex-wrap: wrap; width: 100%;
+    }
+    .tab {
+      flex: 1; min-width: 100px; padding: 12px; border-radius: 10px; border: 2px solid var(--border);
+      background: var(--surface); font-weight: 700; cursor: pointer; color: var(--text);
+    }
+    .tab.active { border-color: var(--accent); background: var(--accent); color: #fff; }
+    /* Vague active en préparation : surlignage distinct */
+    .tab.wave-active-prep { box-shadow: 0 0 0 3px var(--warn); }
+    .tab.wave-a.active { background: var(--wave-a); border-color: var(--wave-a); }
+    .tab.wave-b.active { background: var(--wave-b); border-color: var(--wave-b); }
+    .tab.wave-c.active { background: var(--wave-c); border-color: var(--wave-c); }
+    .tab.wave-d.active { background: var(--wave-d); border-color: var(--wave-d); color: #0f172a; }
+    .tab.wave-e.active { background: var(--wave-e); border-color: var(--wave-e); color: #0f172a; }
+    .tab.wave-f.active { background: var(--wave-f); border-color: var(--wave-f); color: #0f172a; }
+
+    main { padding: 14px 16px 28px; max-width: 1200px; margin: 0 auto; }
+
+    .panel {
+      background: var(--surface);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-panel);
+    }
+    .panel h2 { margin: 0 0 14px; font-size: 1.08rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+
+    /* Import CSV */
+    .import-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    input[type="file"] { font-size: 0.95rem; max-width: 100%; }
+
+    /* Liste élèves + vagues */
+    .pool {
+      min-height: 80px; padding: 10px; border: 2px dashed var(--border); border-radius: 10px;
+      background: var(--bg); transition: background 0.2s, border-color 0.2s;
+    }
+    .pool.drag-over { border-color: var(--accent); background: var(--success-bg); }
+    .pool-title { font-weight: 800; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      cursor: grab;
+      font-size: 0.92rem;
+      font-weight: 600;
+      user-select: none;
+      touch-action: manipulation;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .chip:hover { box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08); }
+    .chip:active { cursor: grabbing; }
+    .chip.dragging { opacity: 0.5; }
+    .waves-grid {
+      display: grid; gap: 12px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 640px) {
+      .waves-grid { grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); }
+    }
+
+    /* Chronomètre */
+    .timer-bar {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: space-between;
+      background: var(--timer-bg);
+      color: var(--timer-fg);
+      padding: 20px 22px;
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+    .timer-display {
+      font-variant-numeric: tabular-nums; font-size: clamp(2.5rem, 10vw, 4.5rem); font-weight: 900; letter-spacing: 0.04em;
+    }
+    .timer-display.flash-end { animation: flashRed 0.6s ease-in-out 3; }
+    @keyframes flashRed {
+      0%, 100% { color: var(--timer-fg); }
+      50% { color: #f87171; transform: scale(1.03); }
+    }
+    .timer-meta { font-size: 0.95rem; opacity: 0.9; }
+
+    #tab-eval {
+      padding: 0 2px 12px;
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    /* Zone évaluation : défilement horizontal si beaucoup d’élèves */
+    .eval-scroll {
+      overflow-x: auto; overflow-y: visible; padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .eval-columns {
+      display: flex; gap: 10px; align-items: stretch;
+    }
+    .student-col {
+      flex: 0 0 auto; width: min(210px, 44vw); min-width: 156px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 12px 14px;
+      display: flex; flex-direction: column; gap: 10px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+    }
+    .student-col.locked { opacity: 0.72; pointer-events: none; filter: grayscale(0.15); }
+
+    .student-head {
+      text-align: center;
+      padding-bottom: 12px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .student-name-line {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 6px 8px;
+    }
+    .student-col .name {
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .name-sep { color: var(--muted); font-weight: 300; opacity: 0.7; }
+    .diodes-pill {
+      font-size: 0.88rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      white-space: nowrap;
+    }
+
+    /* Zone « tirs » vs « portes » dans chaque colonne élève */
+    .student-col-tirs {
+      padding: 10px 8px 12px;
+      margin: 2px 0 0;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+    }
+    .student-col-course {
+      padding: 12px 8px 6px;
+      margin-top: 10px;
+      border-radius: 14px;
+      background: rgba(56, 189, 248, 0.07);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    /* Bloc série de tir (réussis / tentés, max 5 tirs par série) */
+    .serie-block { border-radius: 12px; padding: 8px 6px; background: rgba(0, 0, 0, 0.18); }
+    .serie-line {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 8px;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 6px;
+      border: 2px solid transparent;
+      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .serie-line-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .serie-line-scores {
+      font-variant-numeric: tabular-nums;
+      line-height: 1.15;
+    }
+    /* Série complète : 5 tirs tentés (x / 5) */
+    .serie-line.serie-line-complete {
+      border: 2px dashed rgba(248, 113, 113, 0.7);
+      background: rgba(248, 113, 113, 0.08);
+      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.15) inset;
+    }
+    .serie-line .sep { color: var(--muted); font-weight: 600; margin: 0 6px; font-size: 1rem; }
+    .serie-line .big {
+      font-size: 1.38rem;
+      font-weight: 900;
+      color: var(--accent);
+    }
+    .serie-actions { display: flex; flex-direction: column; gap: 5px; }
+    .serie-btn {
+      min-height: 44px;
+      padding: 6px 8px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.15;
+      text-align: center;
+      border-radius: 10px;
+      border: 1px solid var(--tir-border);
+      background: var(--tir-bg);
+      color: var(--tir-fg);
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    .serie-btn:hover { background: var(--tir-bg-hover); border-color: #475569; }
+    .serie-btn:active { transform: scale(0.98); }
+    .serie-btn.serie-btn-reussi {
+      background: linear-gradient(165deg, #16a34a 0%, #15803d 55%, #166534 100%);
+      color: #ecfdf5;
+      border-color: #4ade80;
+      box-shadow: 0 2px 12px rgba(34, 197, 94, 0.25);
+    }
+    .serie-btn.serie-btn-reussi:hover {
+      background: linear-gradient(165deg, #22c55e 0%, #16a34a 100%);
+      border-color: #86efac;
+    }
+    .serie-btn.serie-btn-undo {
+      border-color: rgba(248, 113, 113, 0.45);
+      color: #fecaca;
+      background: rgba(127, 29, 29, 0.35);
+      font-size: 0.65rem;
+      line-height: 1.2;
+      min-height: 50px;
+      white-space: normal;
+    }
+    .serie-total {
+      margin-top: 8px;
+      padding: 10px 8px 12px;
+      text-align: center;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--text);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+    .serie-total-prefix {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .serie-total-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .serie-total .big { font-size: 1.28rem; font-weight: 900; color: var(--accent); }
+    .serie-total .sep { color: var(--muted); font-weight: 600; margin: 0 6px; font-size: 1rem; }
+
+    .eval-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px dashed var(--border);
+    }
+    .eval-toolbar .hint { font-size: 0.82rem; color: var(--muted); max-width: 520px; line-height: 1.35; }
+
+    .student-col-course .course-box { margin-top: 0; }
+    .course-box { margin-top: 6px; }
+    .portes-title {
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .pass-display {
+      text-align: center;
+      font-size: 2.15rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      padding: 10px 8px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.35);
+      border: 2px solid var(--border);
+      color: var(--text);
+    }
+    .pass-display.ok { background: var(--success-bg); border-color: var(--success); color: var(--success); }
+    .pass-display.bad { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+    .pass-step-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 6px 0; }
+    .pass-step-row button { min-height: 46px; font-weight: 800; font-size: 0.95rem; border-radius: 8px; border: 2px solid var(--border); background: var(--surface); touch-action: manipulation; }
+    .pass-num-input {
+      width: 100%; min-height: 48px; font-size: 1.35rem; font-weight: 800; text-align: center;
+      border: 2px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text);
+      font-variant-numeric: tabular-nums; margin-top: 4px;
+    }
+    .pass-quick-8 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 6px; }
+    .pass-quick-8 button { min-height: 42px; font-weight: 800; font-size: 0.85rem; border-radius: 6px; border: 2px solid var(--border); background: var(--surface); touch-action: manipulation; }
+
+    /* Tableau résultats */
+    .results-wrap { overflow-x: auto; }
+    table.results { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    table.results th, table.results td { border: 1px solid var(--border); padding: 8px; text-align: center; }
+    table.results th { background: var(--bg); }
+    table.results tr:nth-child(even) { background: rgba(255, 255, 255, 0.04); }
+    .score-cell { font-weight: 800; }
+    .score-cell.good { color: var(--success); }
+    .score-cell.bad { color: var(--danger); }
+
+    .hidden { display: none !important; }
+    /* Modale (remplace confirm() : visible même si les dialogues natifs sont bloqués) */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .modal-overlay.hidden { display: none !important; }
+    .modal-box {
+      max-width: 440px;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+    }
+    .modal-box h3 { margin: 0 0 12px; font-size: 1.12rem; font-weight: 800; }
+    .modal-box .modal-msg { margin: 0 0 20px; color: var(--text); line-height: 1.5; white-space: pre-wrap; }
+    .modal-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    @media print {
+      .modal-overlay { display: none !important; }
+      .toolbar, .no-print, #tab-setup, #tab-eval { display: none !important; }
+      #tab-results { display: block !important; }
+      body { background: #fff; color: #000; }
+      .panel { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <!-- =============================================================================
+       Barre d’outils — accès rapide terrain
+       ============================================================================= -->
+  <header class="toolbar">
+    <h1>Laser Run — Évaluation simultanée</h1>
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button type="button" class="tab active" data-tab="setup">Préparation</button>
+      <button type="button" class="tab" data-tab="eval">Évaluation</button>
+      <button type="button" class="tab" data-tab="results">Résultats</button>
+    </div>
+    <div id="toolbar-eval-only" class="toolbar-eval-only hidden" aria-hidden="true">
+      <button type="button" class="btn small secondary" id="btn-fs">Plein écran</button>
+      <button type="button" class="btn secondary passage-toggle active-passage" id="btn-passage1" title="Saisie passage 1">Passage 1</button>
+      <button type="button" class="btn secondary passage-toggle" id="btn-passage2" title="Saisie passage 2">Passage 2</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Onglet Préparation : import + vagues -->
+    <section id="tab-setup" class="tab-panel">
+      <div class="panel">
+        <h2>1. Import des élèves (CSV : Nom;Prénom)</h2>
+        <div class="import-row">
+          <input type="file" id="csv-file" accept=".csv,text/csv" />
+          <button type="button" class="btn secondary small" id="btn-sample">Charger un exemple</button>
+          <button type="button" class="btn danger small" id="btn-clear-students">Vider la liste</button>
+        </div>
+        <div class="manual-import">
+          <label for="manual-students">Ou saisir à la main (une ligne = un élève)</label>
+          <textarea id="manual-students" rows="6" spellcheck="false" placeholder="Un prénom par ligne, par exemple :&#10;Chloé&#10;Bruno&#10;&#10;Vous pouvez aussi écrire Nom;Prénom ou Nom Prénom."></textarea>
+          <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <button type="button" class="btn small" id="btn-add-manual">Ajouter à la liste</button>
+            <span style="color:var(--muted);font-size:0.85rem;">Prénom seul → nom affiché « — ». Ligne <code>Nom;Prénom</code> ou <code>Nom Prénom</code> acceptée.</span>
+          </div>
+        </div>
+        <p style="color:var(--muted);font-size:0.9rem;margin-top:8px;">
+          Fichier CSV : séparateur <strong>;</strong> ou <strong>,</strong>. Une ligne d’en-tête optionnelle (nom/prénom) est ignorée.
+        </p>
+      </div>
+
+      <div class="panel">
+        <h2>2. Liste complète (effectif <span id="count-all">0</span>)</h2>
+        <div class="results-wrap" style="max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;">
+          <table class="results" id="roster-table" aria-label="Liste de tous les élèves">
+            <thead>
+              <tr><th>Nom</th><th>Prénom</th><th>Vague</th></tr>
+            </thead>
+            <tbody id="roster-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>3. Répartition en vagues (clic ou glisser-déposer)</h2>
+        <p style="margin-top:0;color:var(--muted);font-size:0.9rem;">
+          Choisissez une vague cible (A à F), puis cliquez une carte élève pour l’y envoyer, ou glissez-déposez les cartes entre les zones.
+        </p>
+        <div style="margin:10px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+          <span>Clic sur un élève → envoi vers :</span>
+          <button type="button" class="btn small secondary wave-a prep-target" id="prep-wave-a" data-prep-wave="A">Vague A</button>
+          <button type="button" class="btn small secondary wave-b prep-target" id="prep-wave-b" data-prep-wave="B">Vague B</button>
+          <button type="button" class="btn small secondary wave-c prep-target" id="prep-wave-c" data-prep-wave="C">Vague C</button>
+          <button type="button" class="btn small secondary prep-target" id="prep-wave-d" data-prep-wave="D" style="border-color:var(--wave-d);color:var(--wave-d)">Vague D</button>
+          <button type="button" class="btn small secondary prep-target" id="prep-wave-e" data-prep-wave="E" style="border-color:var(--wave-e);color:var(--wave-e)">Vague E</button>
+          <button type="button" class="btn small secondary prep-target" id="prep-wave-f" data-prep-wave="F" style="border-color:var(--wave-f);color:var(--wave-f)">Vague F</button>
+          <button type="button" class="btn small secondary prep-target" id="prep-wave-u" data-prep-wave="__unassigned__">Non assignés</button>
+        </div>
+        <div class="waves-grid">
+          <div class="pool" data-wave="A" id="pool-A">
+            <div class="pool-title" style="color:var(--wave-a)">Vague A <span id="count-A">0</span></div>
+            <div class="chips" id="chips-A"></div>
+          </div>
+          <div class="pool" data-wave="B" id="pool-B">
+            <div class="pool-title" style="color:var(--wave-b)">Vague B <span id="count-B">0</span></div>
+            <div class="chips" id="chips-B"></div>
+          </div>
+          <div class="pool" data-wave="C" id="pool-C">
+            <div class="pool-title" style="color:var(--wave-c)">Vague C <span id="count-C">0</span></div>
+            <div class="chips" id="chips-C"></div>
+          </div>
+          <div class="pool" data-wave="D" id="pool-D">
+            <div class="pool-title" style="color:var(--wave-d)">Vague D <span id="count-D">0</span></div>
+            <div class="chips" id="chips-D"></div>
+          </div>
+          <div class="pool" data-wave="E" id="pool-E">
+            <div class="pool-title" style="color:var(--wave-e)">Vague E <span id="count-E">0</span></div>
+            <div class="chips" id="chips-E"></div>
+          </div>
+          <div class="pool" data-wave="F" id="pool-F">
+            <div class="pool-title" style="color:var(--wave-f)">Vague F <span id="count-F">0</span></div>
+            <div class="chips" id="chips-F"></div>
+          </div>
+          <div class="pool" data-wave="__unassigned__" id="pool-unassigned">
+            <div class="pool-title"><span>Non assignés</span><span id="count-U">0</span></div>
+            <div class="chips" id="chips-U"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Onglet Évaluation -->
+    <section id="tab-eval" class="tab-panel hidden">
+      <div class="panel no-print">
+        <h2>Vague en cours & chronomètre (3 min)</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+          <button type="button" class="tab wave-a" data-select-wave="A" id="sel-A">Vague A</button>
+          <button type="button" class="tab wave-b" data-select-wave="B" id="sel-B">Vague B</button>
+          <button type="button" class="tab wave-c" data-select-wave="C" id="sel-C">Vague C</button>
+          <button type="button" class="tab wave-d" data-select-wave="D" id="sel-D">Vague D</button>
+          <button type="button" class="tab wave-e" data-select-wave="E" id="sel-E">Vague E</button>
+          <button type="button" class="tab wave-f" data-select-wave="F" id="sel-F">Vague F</button>
+        </div>
+        <div class="timer-bar">
+          <div>
+            <div class="timer-display" id="timer-display">3:00</div>
+            <div class="timer-meta" id="timer-status">Chrono arrêté — sélectionnez une vague puis démarrez.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button type="button" class="btn" id="btn-start-wave" style="font-size:1.1rem;">Démarrer la vague</button>
+            <button type="button" class="btn secondary" id="btn-reset-timer">Réinitialiser le chrono</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="eval-panel">
+        <h2>Saisie multi-élèves <span class="badge" id="eval-wave-label">Vague A</span></h2>
+        <div class="eval-toolbar no-print">
+          <button type="button" class="btn secondary" id="btn-reset-wave-scores">Réinitialiser la vague</button>
+          <span class="hint">Remet à <strong>0</strong> toutes les séries de tir et les portes pour la <strong>vague</strong> et le <strong>passage</strong> en cours. Un nouveau « Démarrer la vague » fait aussi cette remise à zéro automatiquement.</span>
+        </div>
+        <p id="eval-empty" class="hidden" style="color:var(--muted);">Aucun élève dans cette vague. Assignez des élèves dans l’onglet Préparation.</p>
+        <div class="eval-scroll" id="eval-scroll">
+          <div class="eval-columns" id="eval-columns"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Onglet Résultats -->
+    <section id="tab-results" class="tab-panel hidden">
+      <div class="panel">
+        <h2>Récapitulatif & comparatif</h2>
+        <p style="color:var(--muted);font-size:0.9rem;">
+          Score global = <strong>total tirs réussis</strong> + <strong>portes</strong> (max 32). Colonne tirs : <strong>réussis / tentés</strong> sur les 5 séries (5 tirs max par série).
+        </p>
+        <div class="results-wrap">
+          <table class="results" id="results-table" aria-describedby="results-desc">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Vague</th>
+                <th>Passage</th>
+                <th>Tirs (réussis / tentés)</th>
+                <th>Passages</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="results-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel no-print">
+        <h2>Export & données</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+          <button type="button" class="btn" id="btn-export-csv">Exporter CSV</button>
+          <button type="button" class="btn secondary" id="btn-restore-hint">Sauvegarde auto : localStorage</button>
+        </div>
+        <p id="save-status" style="font-size:0.85rem;color:var(--muted);margin-top:8px;"></p>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal-reset-wave" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-reset-wave-title">
+    <div class="modal-box" id="modal-reset-wave-inner">
+      <h3 id="modal-reset-wave-title">Réinitialiser la vague</h3>
+      <p class="modal-msg" id="modal-reset-wave-msg"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" id="modal-reset-wave-cancel">Annuler</button>
+        <button type="button" class="btn" id="modal-reset-wave-next">Continuer</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /*
+       * Application Laser Run (EPS) — fichier unique, sans backend.
+       * Flux : import CSV → répartition en vagues A–F → chronomètre 3 min →
+       * saisie simultanée (5 séries réussis/tentés + portes) → passage 2 → résultats / export.
+       * Données : localStorage (reprise après fermeture du navigateur).
+       */
+
+      /** Durée d’une vague : 3 minutes en millisecondes */
+      var DURATION_MS = 3 * 60 * 1000;
+      /** Clé de persistance */
+      var STORAGE_KEY = 'laserRunEps_v1';
+      /** Nombre max de portes (plusieurs tours de 8) */
+      var MAX_PORTES = 32;
+      /** Seuil visuel « bon » (ex. 3 tours complets de 8) */
+      var PASS_GOOD = 24;
+      /** Tirs maximum par série (5 séries par passage) */
+      var MAX_TIRS_SERIE = 5;
+      /** Identifiants des 6 vagues */
+      var WAVE_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+      /** @typedef {{ id: string, nom: string, prenom: string }} Student */
+      /** @typedef {'A'|'B'|'C'|'D'|'E'|'F'} WaveId */
+
+      /**
+       * État global de l’application (sérialisé dans localStorage).
+       * @type {{
+       *   students: Student[],
+       *   waves: Record<WaveId, string[]>,
+       *   activeWave: WaveId,
+       *   passage: 1|2,
+       *   scores: Record<string, { p1: { series: Array<{r:number,t:number,stack:string[]}>, passages: number }, p2: same }>,
+       *   timerEndAt: number|null,
+       *   timerPausedLeftMs: number|null,
+       *   clickTargetWave: WaveId|'__unassigned__',
+       *   postWaveDiodesSummary: boolean
+       * }}
+       */
+      var state = {
+        students: [],
+        waves: { A: [], B: [], C: [], D: [], E: [], F: [] },
+        activeWave: 'A',
+        passage: 1,
+        scores: {},
+        timerEndAt: null,
+        timerPausedLeftMs: null,
+        clickTargetWave: 'A',
+        /** Affiche la somme des diodes (tirs) à côté du nom après fin de chrono */
+        postWaveDiodesSummary: false
+      };
+
+      var timerInterval = null;
+
+      // --- Utilitaires ---------------------------------------------------------
+
+      function uid() {
+        return 's' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function studentById(id) {
+        for (var i = 0; i < state.students.length; i++) {
+          if (state.students[i].id === id) return state.students[i];
+        }
+        return null;
+      }
+
+      function emptySerie() {
+        return { r: 0, t: 0, stack: [] };
+      }
+
+      /** Bloc passage : 5 séries (réussis / tentés) + portes course */
+      function emptyPassageBlock() {
+        return {
+          series: [emptySerie(), emptySerie(), emptySerie(), emptySerie(), emptySerie()],
+          passages: 0
+        };
+      }
+
+      /**
+       * Normalise un bloc passage (format actuel ou ancien avec `tirs[]`).
+       */
+      function normalizePassageBlock(block) {
+        var passages = block && block.passages != null ? Math.min(MAX_PORTES, Math.max(0, block.passages | 0)) : 0;
+        if (block && block.series && block.series.length === 5) {
+          for (var i = 0; i < 5; i++) {
+            var si = block.series[i];
+            if (!si.stack) si.stack = [];
+            si.t = Math.min(MAX_TIRS_SERIE, Math.max(0, si.t | 0));
+            si.r = Math.min(MAX_TIRS_SERIE, Math.max(0, si.r | 0));
+            if (si.r > si.t) si.r = si.t;
+          }
+          return { series: block.series, passages: passages };
+        }
+        var leg = block && block.tirs ? block.tirs : [0, 0, 0, 0, 0];
+        var series = [];
+        for (var j = 0; j < 5; j++) {
+          var v = leg[j] | 0;
+          series.push({ r: Math.min(5, v), t: v > 0 ? 5 : 0, stack: [] });
+        }
+        return { series: series, passages: passages };
+      }
+
+      function sumReussis(series) {
+        var s = 0;
+        for (var i = 0; i < series.length; i++) s += series[i].r | 0;
+        return s;
+      }
+
+      function sumTentes(series) {
+        var s = 0;
+        for (var i = 0; i < series.length; i++) s += series[i].t | 0;
+        return s;
+      }
+
+      /** Score classement : réussites + portes (les tentés sont dans l’affichage détaillé) */
+      function globalScoreBlock(block) {
+        return sumReussis(block.series) + (block.passages | 0);
+      }
+
+      /** Remet à zéro tirs (5 séries) + portes pour tous les élèves d’une vague, passage p1 ou p2 */
+      function resetWavePassageScores(wave, pk) {
+        var ids = state.waves[wave];
+        if (!ids) return;
+        for (var i = 0; i < ids.length; i++) {
+          ensureScore(ids[i]);
+          state.scores[ids[i]][pk] = emptyPassageBlock();
+        }
+      }
+
+      /** Assure l’existence des scores pour un élève (format séries) */
+      function ensureScore(studentId) {
+        if (!state.scores[studentId]) {
+          state.scores[studentId] = {
+            p1: emptyPassageBlock(),
+            p2: emptyPassageBlock()
+          };
+          return;
+        }
+        var o = state.scores[studentId];
+        o.p1 = o.p1 ? normalizePassageBlock(o.p1) : emptyPassageBlock();
+        o.p2 = o.p2 ? normalizePassageBlock(o.p2) : emptyPassageBlock();
+      }
+
+      function getPassageKey() {
+        return state.passage === 2 ? 'p2' : 'p1';
+      }
+
+      /** Sauvegarde automatique */
+      function saveStorage() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          var el = document.getElementById('save-status');
+          if (el) el.textContent = 'Dernière sauvegarde : ' + new Date().toLocaleTimeString('fr-FR');
+        } catch (e) {
+          console.warn('localStorage plein ou indisponible', e);
+        }
+      }
+
+      function loadStorage() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          var o = JSON.parse(raw);
+          if (o && o.students) {
+            state.students = o.students;
+            state.waves = Object.assign({ A: [], B: [], C: [], D: [], E: [], F: [] }, o.waves || {});
+            state.activeWave = o.activeWave || 'A';
+            if (WAVE_LETTERS.indexOf(state.activeWave) < 0) state.activeWave = 'A';
+            state.passage = o.passage === 2 ? 2 : 1;
+            state.scores = o.scores || {};
+            state.timerEndAt = o.timerEndAt != null ? o.timerEndAt : null;
+            state.timerPausedLeftMs = o.timerPausedLeftMs != null ? o.timerPausedLeftMs : null;
+            state.clickTargetWave = o.clickTargetWave || 'A';
+            if (state.clickTargetWave !== '__unassigned__' && WAVE_LETTERS.indexOf(state.clickTargetWave) < 0) {
+              state.clickTargetWave = 'A';
+            }
+            state.postWaveDiodesSummary = !!o.postWaveDiodesSummary;
+            /* Anciennes sauvegardes : chrono déjà terminé → afficher les diodes */
+            if (state.timerPausedLeftMs === 0 && state.timerEndAt == null && o.postWaveDiodesSummary === undefined) {
+              state.postWaveDiodesSummary = true;
+            }
+          }
+        } catch (e) {
+          console.warn('Reprise impossible', e);
+        }
+      }
+
+      // --- Parsing CSV ----------------------------------------------------------
+
+      /**
+       * Importe un texte CSV (Nom;Prénom ou Nom,Prénom).
+       * @param {string} text
+       */
+      function importCsvText(text) {
+        var lines = text.split(/\r?\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+        var students = [];
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          var sep = line.indexOf(';') >= 0 ? ';' : ',';
+          var parts = line.split(sep).map(function (p) { return p.trim().replace(/^"|"$/g, ''); });
+          if (parts.length < 2) continue;
+          var nom = parts[0];
+          var prenom = parts[1];
+          // Ignore une ligne d’en-tête probable
+          if (i === 0 && /nom/i.test(nom) && /prénom|prenom/i.test(prenom)) continue;
+          if (!nom && !prenom) continue;
+          students.push({ id: uid(), nom: nom || '?', prenom: prenom || '?' });
+        }
+        return students;
+      }
+
+      /**
+       * Import depuis la zone texte : une ligne = un élève.
+       * — Prénom seul (un mot ou plusieurs sans ; ni ,) : nom = « — », prénom = ligne entière.
+       * — Nom;Prénom ou Nom,Prénom (comme le CSV).
+       * — « Nom Prénom » : premier mot = nom, reste = prénom (espaces).
+       */
+      function importManualText(text) {
+        var lines = String(text || '')
+          .split(/\r?\n/)
+          .map(function (l) { return l.trim(); })
+          .filter(Boolean);
+        var students = [];
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          var sep = line.indexOf(';') >= 0 ? ';' : line.indexOf(',') >= 0 ? ',' : null;
+          if (sep) {
+            var parts = line.split(sep).map(function (p) { return p.trim().replace(/^"|"$/g, ''); });
+            if (parts.length >= 2) {
+              var nom = parts[0];
+              var prenom = parts[1];
+              if (i === 0 && /nom/i.test(nom) && /prénom|prenom/i.test(prenom)) continue;
+              if (!nom && !prenom) continue;
+              students.push({ id: uid(), nom: nom || '?', prenom: prenom || '?' });
+            }
+            continue;
+          }
+          var space = line.indexOf(' ');
+          if (space > 0 && space < line.length - 1) {
+            students.push({
+              id: uid(),
+              nom: line.slice(0, space).trim(),
+              prenom: line.slice(space + 1).trim()
+            });
+            continue;
+          }
+          students.push({ id: uid(), nom: '—', prenom: line });
+        }
+        return students;
+      }
+
+      /** Met à jour le style des boutons Passage 1 / Passage 2 (actif = allumé). */
+      function updatePassageUi() {
+        var b1 = document.getElementById('btn-passage1');
+        var b2 = document.getElementById('btn-passage2');
+        if (b1) b1.classList.toggle('active-passage', state.passage === 1);
+        if (b2) b2.classList.toggle('active-passage', state.passage === 2);
+      }
+
+      // --- Timer ----------------------------------------------------------------
+
+      function isTimerRunning() {
+        return state.timerEndAt != null && Date.now() < state.timerEndAt;
+      }
+
+      function remainingMs() {
+        if (state.timerEndAt == null) {
+          if (state.timerPausedLeftMs != null) return state.timerPausedLeftMs;
+          return DURATION_MS;
+        }
+        return Math.max(0, state.timerEndAt - Date.now());
+      }
+
+      function formatMs(ms) {
+        var sec = Math.ceil(ms / 1000);
+        var m = Math.floor(sec / 60);
+        var s = sec % 60;
+        return m + ':' + (s < 10 ? '0' : '') + s;
+      }
+
+      /** Bip de fin (Web Audio API) — bonus */
+      function playEndBeep() {
+        try {
+          var Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return;
+          var ctx = new Ctx();
+          var o = ctx.createOscillator();
+          var g = ctx.createGain();
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.frequency.value = 880;
+          o.type = 'square';
+          g.gain.setValueAtTime(0.15, ctx.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+          o.start(ctx.currentTime);
+          o.stop(ctx.currentTime + 0.35);
+        } catch (e) { /* silencieux si audio bloqué */ }
+      }
+
+      function onTimerFinished() {
+        state.postWaveDiodesSummary = true;
+        var disp = document.getElementById('timer-display');
+        if (disp) disp.classList.add('flash-end');
+        setTimeout(function () { if (disp) disp.classList.remove('flash-end'); }, 2000);
+        playEndBeep();
+        document.getElementById('timer-status').textContent = 'Temps écoulé — diodes affichées à côté des prénoms.';
+        renderEval();
+        saveStorage();
+      }
+
+      function tickTimer() {
+        var ms = remainingMs();
+        document.getElementById('timer-display').textContent = formatMs(ms);
+        if (state.timerEndAt != null && ms <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          state.timerEndAt = null;
+          state.timerPausedLeftMs = 0;
+          onTimerFinished();
+        }
+      }
+
+      function startTimer() {
+        var ids = state.waves[state.activeWave];
+        if (!ids || ids.length === 0) {
+          alert('Aucun élève dans la vague ' + state.activeWave + '.');
+          return;
+        }
+        var pk = getPassageKey();
+        resetWavePassageScores(state.activeWave, pk);
+        state.timerEndAt = Date.now() + DURATION_MS;
+        state.timerPausedLeftMs = null;
+        state.postWaveDiodesSummary = false;
+        document.getElementById('timer-status').textContent = 'Vague ' + state.activeWave + ' en cours…';
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(tickTimer, 200);
+        tickTimer();
+        renderEval();
+        highlightActiveWaveTabs();
+        saveStorage();
+      }
+
+      function resetTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = null;
+        state.timerEndAt = null;
+        state.timerPausedLeftMs = DURATION_MS;
+        state.postWaveDiodesSummary = false;
+        document.getElementById('timer-display').textContent = '3:00';
+        document.getElementById('timer-status').textContent = 'Chrono réinitialisé (prêt).';
+        renderEval();
+        saveStorage();
+      }
+
+      // --- Rendu préparation ----------------------------------------------------
+
+      function renderAllPools() {
+        var assigned = {};
+        WAVE_LETTERS.forEach(function (w) {
+          state.waves[w].forEach(function (id) { assigned[id] = w; });
+        });
+        var unassigned = state.students.filter(function (s) { return !assigned[s.id]; });
+
+        function renderChips(containerId, list, waveKey) {
+          var el = document.getElementById(containerId);
+          if (!el) return;
+          el.innerHTML = '';
+          for (var i = 0; i < list.length; i++) {
+            el.appendChild(makeChip(list[i], waveKey));
+          }
+        }
+
+        document.getElementById('count-all').textContent = String(state.students.length);
+        renderRosterTable(assigned);
+
+        WAVE_LETTERS.forEach(function (w) {
+          var el = document.getElementById('count-' + w);
+          if (el) el.textContent = String(state.waves[w].length);
+        });
+        document.getElementById('count-U').textContent = String(unassigned.length);
+
+        WAVE_LETTERS.forEach(function (w) {
+          renderChips('chips-' + w, state.waves[w].map(studentById).filter(Boolean), w);
+        });
+        renderChips('chips-U', unassigned, '__unassigned__');
+      }
+
+      /** Affiche la liste complète sous forme de tableau (sans doublon avec les vagues). */
+      function renderRosterTable(assignedMap) {
+        var tbody = document.getElementById('roster-body');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        for (var i = 0; i < state.students.length; i++) {
+          var s = state.students[i];
+          var w = assignedMap[s.id] || '—';
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td>' + escapeHtml(s.nom) + '</td><td>' + escapeHtml(s.prenom) + '</td><td><strong>' + w + '</strong></td>';
+          tbody.appendChild(tr);
+        }
+      }
+
+      /**
+       * Crée une puce élève draggable.
+       */
+      function makeChip(stu, sourceWave) {
+        var d = document.createElement('div');
+        d.className = 'chip';
+        d.textContent = stu.nom + ' ' + stu.prenom;
+        d.draggable = true;
+        d.dataset.studentId = stu.id;
+        d.dataset.sourceWave = sourceWave;
+        d.addEventListener('dragstart', function (e) {
+          d.classList.add('dragging');
+          e.dataTransfer.setData('text/plain', stu.id);
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        d.addEventListener('dragend', function () {
+          d.classList.remove('dragging');
+        });
+        // Clic : envoi vers la vague cible (boutons A / B / C / Non assignés)
+        d.addEventListener('click', function () {
+          if (sourceWave === '__unassigned__' || WAVE_LETTERS.indexOf(sourceWave) >= 0) {
+            var tgt = state.clickTargetWave;
+            if (tgt === '__unassigned__') moveStudentToWave(stu.id, '__unassigned__');
+            else moveStudentToWave(stu.id, /** @type {WaveId} */ (tgt));
+          }
+        });
+        return d;
+      }
+
+      /** Retire l’élève de toutes les vagues */
+      function removeFromWaves(studentId) {
+        WAVE_LETTERS.forEach(function (w) {
+          state.waves[w] = state.waves[w].filter(function (id) { return id !== studentId; });
+        });
+      }
+
+      /**
+       * Déplace un élève vers une vague (ou unassigned si __unassigned__).
+       * @param {string} studentId
+       * @param {WaveId|'__unassigned__'} target
+       */
+      function moveStudentToWave(studentId, target) {
+        removeFromWaves(studentId);
+        if (target === '__unassigned__') {
+          /* rien : déjà retiré */
+        } else {
+          if (state.waves[target].indexOf(studentId) < 0) {
+            state.waves[target].push(studentId);
+          }
+        }
+        ensureScore(studentId);
+        renderAllPools();
+        saveStorage();
+      }
+
+      function setupDropZones() {
+        var pools = document.querySelectorAll('.pool[data-wave]');
+        for (var i = 0; i < pools.length; i++) {
+          (function (pool) {
+            var wave = pool.getAttribute('data-wave');
+            pool.addEventListener('dragover', function (e) {
+              e.preventDefault();
+              pool.classList.add('drag-over');
+            });
+            pool.addEventListener('dragleave', function () {
+              pool.classList.remove('drag-over');
+            });
+            pool.addEventListener('drop', function (e) {
+              e.preventDefault();
+              pool.classList.remove('drag-over');
+              var sid = e.dataTransfer.getData('text/plain');
+              if (!sid) return;
+              moveStudentToWave(sid, wave === '__unassigned__' ? '__unassigned__' : /** @type {WaveId} */ (wave));
+            });
+          })(pools[i]);
+        }
+      }
+
+      // --- Rendu évaluation -----------------------------------------------------
+
+      /**
+       * Verrouillage des saisies : déverrouillé uniquement pendant les 3 minutes
+       * après « Démarrer la vague ». Avant le départ ou après 0:00, tout est bloqué.
+       */
+      function inputsLockedCorrected() {
+        if (state.timerEndAt != null && Date.now() < state.timerEndAt) return false;
+        return true;
+      }
+
+      function highlightActiveWaveTabs() {
+        WAVE_LETTERS.forEach(function (w) {
+          var b = document.getElementById('sel-' + w);
+          if (!b) return;
+          b.classList.remove('active', 'wave-active-prep');
+        });
+        var btn = document.getElementById('sel-' + state.activeWave);
+        if (btn) {
+          btn.classList.add('active');
+          if (!isTimerRunning()) btn.classList.add('wave-active-prep');
+        }
+        document.body.setAttribute('data-active-wave', state.activeWave);
+      }
+
+      /** Met à jour le surlignage du bouton « vague cible » pour les clics depuis la liste. */
+      function updatePrepTargetVisual() {
+        document.querySelectorAll('.prep-target').forEach(function (b) {
+          b.classList.toggle('selected', b.getAttribute('data-prep-wave') === state.clickTargetWave);
+        });
+      }
+
+      function renderEval() {
+        var label = document.getElementById('eval-wave-label');
+        if (label) label.textContent = 'Vague ' + state.activeWave + ' — Passage ' + state.passage;
+
+        var ids = state.waves[state.activeWave];
+        var empty = document.getElementById('eval-empty');
+        var cols = document.getElementById('eval-columns');
+        if (!cols) return;
+
+        if (!ids || ids.length === 0) {
+          empty.classList.remove('hidden');
+          cols.innerHTML = '';
+          return;
+        }
+        empty.classList.add('hidden');
+
+        var locked = inputsLockedCorrected();
+        cols.innerHTML = '';
+
+        for (var i = 0; i < ids.length; i++) {
+          var stu = studentById(ids[i]);
+          if (!stu) continue;
+          ensureScore(stu.id);
+          cols.appendChild(buildStudentColumn(stu, locked));
+        }
+        highlightActiveWaveTabs();
+      }
+
+      /**
+       * Construit la colonne de saisie pour un élève.
+       */
+      function buildStudentColumn(stu, locked) {
+        var col = document.createElement('div');
+        col.className = 'student-col' + (locked ? ' locked' : '');
+        var pk = getPassageKey();
+        var sc = state.scores[stu.id][pk];
+
+        var head = document.createElement('div');
+        head.className = 'student-head';
+        var line = document.createElement('div');
+        line.className = 'student-name-line';
+        var title = document.createElement('span');
+        title.className = 'name';
+        title.textContent = stu.prenom + ' ' + stu.nom;
+        line.appendChild(title);
+        if (state.postWaveDiodesSummary) {
+          var tr = sumReussis(sc.series);
+          var tt = sumTentes(sc.series);
+          var sep = document.createElement('span');
+          sep.className = 'name-sep';
+          sep.textContent = '·';
+          line.appendChild(sep);
+          var pill = document.createElement('span');
+          pill.className = 'diodes-pill';
+          pill.textContent = tr + ' / ' + tt;
+          pill.setAttribute('title', 'Total tirs réussis / total tirs tentés (toutes séries)');
+          line.appendChild(pill);
+        }
+        head.appendChild(line);
+        col.appendChild(head);
+
+        var zoneTirs = document.createElement('div');
+        zoneTirs.className = 'student-col-tirs';
+        for (var t = 0; t < 5; t++) {
+          zoneTirs.appendChild(buildSerieBlock(stu.id, t, sc.series[t]));
+        }
+        var totR = sumReussis(sc.series);
+        var totT = sumTentes(sc.series);
+        var totEl = document.createElement('div');
+        totEl.className = 'serie-total';
+        totEl.innerHTML =
+          '<span class="serie-total-prefix">Total tirs</span>' +
+          '<div class="serie-total-nums"><span class="big">' + totR + '</span><span class="sep"> / </span><span class="big">' + totT + '</span></div>';
+        zoneTirs.appendChild(totEl);
+        col.appendChild(zoneTirs);
+
+        var zoneCourse = document.createElement('div');
+        zoneCourse.className = 'student-col-course';
+        zoneCourse.appendChild(buildCourseBlock(stu.id, sc.passages));
+        col.appendChild(zoneCourse);
+
+        return col;
+      }
+
+      function buildSerieBlock(studentId, serieIndex, serie) {
+        var wrap = document.createElement('div');
+        wrap.className = 'serie-block';
+        var line = document.createElement('div');
+        line.className = 'serie-line' + (serie.t >= MAX_TIRS_SERIE ? ' serie-line-complete' : '');
+        line.innerHTML =
+          '<span class="serie-line-title">Série ' + (serieIndex + 1) + '</span>' +
+          '<div class="serie-line-scores"><span class="big">' + serie.r + '</span><span class="sep"> / </span><span class="big">' + serie.t + '</span></div>';
+        wrap.appendChild(line);
+
+        var actions = document.createElement('div');
+        actions.className = 'serie-actions';
+
+        var bT = document.createElement('button');
+        bT.type = 'button';
+        bT.className = 'serie-btn';
+        bT.textContent = '+1 tir tenté';
+        bT.addEventListener('click', function () {
+          addSerieTente(studentId, serieIndex);
+        });
+        actions.appendChild(bT);
+
+        var bR = document.createElement('button');
+        bR.type = 'button';
+        bR.className = 'serie-btn serie-btn-reussi';
+        bR.textContent = '+1 tir réussi';
+        bR.addEventListener('click', function () {
+          addSerieReussi(studentId, serieIndex);
+        });
+        actions.appendChild(bR);
+
+        var bU = document.createElement('button');
+        bU.type = 'button';
+        bU.className = 'serie-btn serie-btn-undo';
+        bU.textContent = 'Annuler dernier clic';
+        bU.addEventListener('click', function () {
+          annulerSerie(studentId, serieIndex);
+        });
+        actions.appendChild(bU);
+
+        wrap.appendChild(actions);
+        return wrap;
+      }
+
+      function addSerieTente(studentId, serieIndex) {
+        if (inputsLockedCorrected()) return;
+        ensureScore(studentId);
+        var pk = getPassageKey();
+        var s = state.scores[studentId][pk].series[serieIndex];
+        if (s.t >= MAX_TIRS_SERIE) return;
+        s.t += 1;
+        s.stack.push('T');
+        saveStorage();
+        renderEval();
+      }
+
+      function addSerieReussi(studentId, serieIndex) {
+        if (inputsLockedCorrected()) return;
+        ensureScore(studentId);
+        var pk = getPassageKey();
+        var s = state.scores[studentId][pk].series[serieIndex];
+        if (s.t >= MAX_TIRS_SERIE) return;
+        s.t += 1;
+        s.r += 1;
+        s.stack.push('R');
+        saveStorage();
+        renderEval();
+      }
+
+      function annulerSerie(studentId, serieIndex) {
+        if (inputsLockedCorrected()) return;
+        ensureScore(studentId);
+        var pk = getPassageKey();
+        var s = state.scores[studentId][pk].series[serieIndex];
+        if (!s.stack || !s.stack.length) return;
+        var last = s.stack.pop();
+        if (last === 'R') {
+          s.t -= 1;
+          s.r -= 1;
+        } else if (last === 'T') {
+          s.t -= 1;
+        }
+        saveStorage();
+        renderEval();
+      }
+
+      function buildCourseBlock(studentId, passages) {
+        var box = document.createElement('div');
+        box.className = 'course-box';
+        var lab = document.createElement('div');
+        lab.className = 'portes-title';
+        lab.textContent = 'Portes';
+        box.appendChild(lab);
+
+        var disp = document.createElement('div');
+        disp.className = 'pass-display';
+        if (passages >= PASS_GOOD) disp.classList.add('ok');
+        else if (passages <= 4) disp.classList.add('bad');
+        disp.textContent = String(passages);
+        box.appendChild(disp);
+
+        var stepRow = document.createElement('div');
+        stepRow.className = 'pass-step-row';
+        var steps = [
+          { label: '−8', delta: -8 },
+          { label: '−1', delta: -1 },
+          { label: '+1', delta: 1 },
+          { label: '+8', delta: 8 }
+        ];
+        for (var si = 0; si < steps.length; si++) {
+          (function (d) {
+            var sb = document.createElement('button');
+            sb.type = 'button';
+            sb.textContent = steps[d].label;
+            sb.addEventListener('click', function () {
+              ensureScore(studentId);
+              var pk = getPassageKey();
+              var cur = state.scores[studentId][pk].passages;
+              setPassages(studentId, cur + steps[d].delta);
+            });
+            stepRow.appendChild(sb);
+          })(si);
+        }
+        box.appendChild(stepRow);
+
+        var numIn = document.createElement('input');
+        numIn.type = 'number';
+        numIn.className = 'pass-num-input';
+        numIn.min = '0';
+        numIn.max = String(MAX_PORTES);
+        numIn.value = String(passages);
+        numIn.setAttribute('inputmode', 'numeric');
+        numIn.addEventListener('change', function () {
+          var n = parseInt(numIn.value, 10);
+          if (isNaN(n)) n = passages;
+          setPassages(studentId, n);
+        });
+        numIn.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') numIn.blur();
+        });
+        box.appendChild(numIn);
+
+        var quick8 = document.createElement('div');
+        quick8.className = 'pass-quick-8';
+        var marks = [0, 8, 16, 24, 32];
+        for (var qi = 0; qi < marks.length; qi++) {
+          (function (pp) {
+            var qb = document.createElement('button');
+            qb.type = 'button';
+            qb.textContent = String(pp);
+            if (pp === passages) qb.style.outline = '3px solid var(--accent)';
+            qb.addEventListener('click', function () {
+              setPassages(studentId, pp);
+            });
+            quick8.appendChild(qb);
+          })(marks[qi]);
+        }
+        box.appendChild(quick8);
+        return box;
+      }
+
+      function setPassages(studentId, value) {
+        if (inputsLockedCorrected()) return; // hors fenêtre chrono
+        var v = Math.max(0, Math.min(MAX_PORTES, value));
+        ensureScore(studentId);
+        var pk = getPassageKey();
+        state.scores[studentId][pk].passages = v;
+        saveStorage();
+        renderEval();
+      }
+
+      // --- Résultats ------------------------------------------------------------
+
+      function waveOfStudent(studentId) {
+        for (var wi = 0; wi < WAVE_LETTERS.length; wi++) {
+          var w = WAVE_LETTERS[wi];
+          if (state.waves[w].indexOf(studentId) >= 0) return w;
+        }
+        return '—';
+      }
+
+      function renderResults() {
+        var tbody = document.getElementById('results-body');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        var rows = [];
+        for (var i = 0; i < state.students.length; i++) {
+          var s = state.students[i];
+          ensureScore(s.id);
+          var sc = state.scores[s.id];
+          var w = waveOfStudent(s.id);
+          rows.push({
+            stu: s,
+            wave: w,
+            p1rt: sumReussis(sc.p1.series) + ' / ' + sumTentes(sc.p1.series),
+            p1p: sc.p1.passages,
+            p1g: globalScoreBlock(sc.p1),
+            p2rt: sumReussis(sc.p2.series) + ' / ' + sumTentes(sc.p2.series),
+            p2p: sc.p2.passages,
+            p2g: globalScoreBlock(sc.p2)
+          });
+        }
+        rows.sort(function (a, b) {
+          return b.p1g + b.p2g - (a.p1g + a.p2g);
+        });
+
+        for (var j = 0; j < rows.length; j++) {
+          var r = rows[j];
+          function addRow(passLabel, rtStr, pass, score) {
+            var tr = document.createElement('tr');
+            tr.innerHTML =
+              '<td>' + escapeHtml(r.stu.nom) + '</td>' +
+              '<td>' + escapeHtml(r.stu.prenom) + '</td>' +
+              '<td>' + r.wave + '</td>' +
+              '<td>' + passLabel + '</td>' +
+              '<td>' + rtStr + '</td>' +
+              '<td>' + pass + '</td>' +
+              '<td class="score-cell">' + score + '</td>';
+            var cell = tr.querySelector('.score-cell');
+            var maxPossible = 25 + MAX_PORTES;
+            if (score >= maxPossible * 0.7) cell.classList.add('good');
+            else if (score <= maxPossible * 0.35) cell.classList.add('bad');
+            tbody.appendChild(tr);
+          }
+          addRow('P1', r.p1rt, r.p1p, r.p1g);
+          addRow('P2', r.p2rt, r.p2p, r.p2g);
+        }
+      }
+
+      /** Export CSV complet */
+      function exportCsv() {
+        var head = [
+          'Nom', 'Prenom', 'Vague', 'Passage',
+          'S1R', 'S1T', 'S2R', 'S2T', 'S3R', 'S3T', 'S4R', 'S4T', 'S5R', 'S5T',
+          'PortesCourse', 'TotalReussis', 'TotalTentes', 'ScoreGlobal'
+        ];
+        var lines = [head.join(';')];
+        for (var i = 0; i < state.students.length; i++) {
+          var s = state.students[i];
+          ensureScore(s.id);
+          var w = waveOfStudent(s.id);
+          ['p1', 'p2'].forEach(function (pk) {
+            var block = state.scores[s.id][pk];
+            var passLabel = pk === 'p1' ? '1' : '2';
+            var cells = [s.nom, s.prenom, w, passLabel];
+            for (var si = 0; si < 5; si++) {
+              cells.push(block.series[si].r, block.series[si].t);
+            }
+            cells.push(block.passages);
+            cells.push(sumReussis(block.series));
+            cells.push(sumTentes(block.series));
+            cells.push(globalScoreBlock(block));
+            lines.push(cells.map(function (x) { return String(x).replace(/;/g, ','); }).join(';'));
+          });
+        }
+        var blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'laser-run-resultats.csv';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }
+
+      /** Étape du dialogue modale réinit. vague (1 puis 2 = confirmation finale) */
+      var resetWaveModalStep = 0;
+
+      function closeModalResetWave() {
+        var m = document.getElementById('modal-reset-wave');
+        if (m) m.classList.add('hidden');
+        document.body.style.overflow = '';
+        resetWaveModalStep = 0;
+      }
+
+      function applyModalResetWaveStep1() {
+        resetWaveModalStep = 1;
+        var msg = document.getElementById('modal-reset-wave-msg');
+        var next = document.getElementById('modal-reset-wave-next');
+        if (msg) {
+          msg.textContent =
+            'Réinitialiser la vague ' + state.activeWave + ' (passage ' + state.passage + ') ?\n\n' +
+            'Toutes les séries de tir et les portes seront effacées pour les élèves de cette vague. Cette action ne peut pas être annulée.';
+        }
+        if (next) {
+          next.textContent = 'Continuer';
+          next.className = 'btn';
+        }
+      }
+
+      function applyModalResetWaveStep2() {
+        resetWaveModalStep = 2;
+        var msg = document.getElementById('modal-reset-wave-msg');
+        var next = document.getElementById('modal-reset-wave-next');
+        if (msg) {
+          msg.textContent =
+            'Dernière confirmation : effacer définitivement les données de la vague ' +
+            state.activeWave +
+            ' pour le passage ' +
+            state.passage +
+            ' ?';
+        }
+        if (next) {
+          next.textContent = 'Réinitialiser la vague';
+          next.className = 'btn danger';
+        }
+      }
+
+      function openModalResetWave() {
+        var m = document.getElementById('modal-reset-wave');
+        if (!m) return;
+        applyModalResetWaveStep1();
+        m.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        var next = document.getElementById('modal-reset-wave-next');
+        if (next) next.focus();
+      }
+
+      // --- Onglets --------------------------------------------------------------
+
+      function showTab(name) {
+        document.getElementById('tab-setup').classList.toggle('hidden', name !== 'setup');
+        document.getElementById('tab-eval').classList.toggle('hidden', name !== 'eval');
+        document.getElementById('tab-results').classList.toggle('hidden', name !== 'results');
+        var toolbarEval = document.getElementById('toolbar-eval-only');
+        if (toolbarEval) {
+          var onEval = name === 'eval';
+          toolbarEval.classList.toggle('hidden', !onEval);
+          toolbarEval.setAttribute('aria-hidden', onEval ? 'false' : 'true');
+        }
+        var tabs = document.querySelectorAll('.tab[data-tab]');
+        for (var i = 0; i < tabs.length; i++) {
+          tabs[i].classList.toggle('active', tabs[i].getAttribute('data-tab') === name);
+        }
+        if (name === 'eval') {
+          tickTimer();
+          renderEval();
+        }
+        if (name === 'results') renderResults();
+      }
+
+      // --- Initialisation des écouteurs -----------------------------------------
+
+      function bindUi() {
+        document.querySelectorAll('.tab[data-tab]').forEach(function (t) {
+          t.addEventListener('click', function () {
+            showTab(t.getAttribute('data-tab'));
+          });
+        });
+
+        document.getElementById('csv-file').addEventListener('change', function (e) {
+          var f = e.target.files && e.target.files[0];
+          if (!f) return;
+          var reader = new FileReader();
+          reader.onload = function () {
+            var list = importCsvText(String(reader.result || ''));
+            if (list.length === 0) {
+              alert('Aucun élève détecté. Vérifiez le format Nom;Prénom.');
+              return;
+            }
+            state.students = state.students.concat(list);
+            list.forEach(function (s) { ensureScore(s.id); });
+            renderAllPools();
+            saveStorage();
+          };
+          reader.readAsText(f, 'UTF-8');
+          e.target.value = '';
+        });
+
+        document.getElementById('btn-sample').addEventListener('click', function () {
+          var demo = 'Nom;Prénom\nDupont;Alice\nMartin;Bruno\nBernard;Chloé\nPetit;David\nRobert;Eva';
+          var list = importCsvText(demo);
+          state.students = state.students.concat(list);
+          list.forEach(function (s) { ensureScore(s.id); });
+          renderAllPools();
+          saveStorage();
+        });
+
+        document.getElementById('btn-clear-students').addEventListener('click', function () {
+          if (!confirm('Supprimer tous les élèves et vagues ?')) return;
+          state.students = [];
+          state.waves = { A: [], B: [], C: [], D: [], E: [], F: [] };
+          state.scores = {};
+          state.postWaveDiodesSummary = false;
+          renderAllPools();
+          renderEval();
+          renderResults();
+          saveStorage();
+        });
+
+        document.querySelectorAll('.prep-target').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            state.clickTargetWave = /** @type {WaveId} */ (btn.getAttribute('data-prep-wave'));
+            updatePrepTargetVisual();
+            saveStorage();
+          });
+        });
+
+        document.querySelectorAll('[data-select-wave]').forEach(function (b) {
+          b.addEventListener('click', function () {
+            state.activeWave = /** @type {WaveId} */ (b.getAttribute('data-select-wave'));
+            highlightActiveWaveTabs();
+            renderEval();
+            saveStorage();
+          });
+        });
+
+        document.getElementById('btn-start-wave').addEventListener('click', function () {
+          startTimer();
+        });
+        document.getElementById('btn-reset-timer').addEventListener('click', function () {
+          resetTimer();
+        });
+
+        document.getElementById('btn-reset-wave-scores').addEventListener('click', function () {
+          var ids = state.waves[state.activeWave];
+          if (!ids || !ids.length) {
+            alert('Aucun élève dans la vague ' + state.activeWave + '.');
+            return;
+          }
+          openModalResetWave();
+        });
+
+        var modalResetWave = document.getElementById('modal-reset-wave');
+        var modalResetWaveInner = document.getElementById('modal-reset-wave-inner');
+        if (modalResetWave) {
+          modalResetWave.addEventListener('click', function () {
+            closeModalResetWave();
+          });
+        }
+        if (modalResetWaveInner) {
+          modalResetWaveInner.addEventListener('click', function (e) {
+            e.stopPropagation();
+          });
+        }
+        document.getElementById('modal-reset-wave-cancel').addEventListener('click', function () {
+          closeModalResetWave();
+        });
+        document.getElementById('modal-reset-wave-next').addEventListener('click', function () {
+          if (resetWaveModalStep === 1) {
+            applyModalResetWaveStep2();
+            return;
+          }
+          if (resetWaveModalStep === 2) {
+            resetWavePassageScores(state.activeWave, getPassageKey());
+            renderEval();
+            renderResults();
+            saveStorage();
+            closeModalResetWave();
+          }
+        });
+
+        document.addEventListener('keydown', function (ev) {
+          if (ev.key !== 'Escape') return;
+          var m = document.getElementById('modal-reset-wave');
+          if (m && !m.classList.contains('hidden')) {
+            ev.preventDefault();
+            closeModalResetWave();
+          }
+        });
+
+        document.getElementById('btn-passage1').addEventListener('click', function () {
+          if (state.passage === 1) return;
+          state.passage = 1;
+          updatePassageUi();
+          renderEval();
+          renderResults();
+          saveStorage();
+        });
+
+        document.getElementById('btn-passage2').addEventListener('click', function () {
+          if (state.passage === 2) return;
+          if (!confirm('Activer le passage 2 ? Les notes du passage 1 sont conservées.')) return;
+          state.passage = 2;
+          updatePassageUi();
+          renderEval();
+          renderResults();
+          saveStorage();
+        });
+
+        document.getElementById('btn-add-manual').addEventListener('click', function () {
+          var ta = document.getElementById('manual-students');
+          var raw = ta ? ta.value : '';
+          var list = importManualText(raw);
+          if (list.length === 0) {
+            alert('Aucune ligne reconnue. Saisissez au moins un prénom ou une ligne Nom;Prénom.');
+            return;
+          }
+          for (var i = 0; i < list.length; i++) {
+            state.students.push(list[i]);
+            ensureScore(list[i].id);
+          }
+          if (ta) ta.value = '';
+          renderAllPools();
+          saveStorage();
+        });
+
+        document.getElementById('btn-fs').addEventListener('click', function () {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(function () {});
+          } else {
+            document.exitFullscreen();
+          }
+        });
+
+        document.getElementById('btn-export-csv').addEventListener('click', exportCsv);
+
+        document.getElementById('btn-restore-hint').addEventListener('click', function () {
+          var el = document.getElementById('save-status');
+          if (el) {
+            el.textContent =
+              'Les données sont enregistrées automatiquement dans ce navigateur (localStorage). ' +
+              'Rouvrez ce fichier HTML pour reprendre la dernière session sur le même appareil.';
+          }
+        });
+
+        setupDropZones();
+      }
+
+      // --- Boot -----------------------------------------------------------------
+
+      function boot() {
+        loadStorage();
+        bindUi();
+        updatePassageUi();
+        if (state.timerPausedLeftMs == null && state.timerEndAt == null) {
+          state.timerPausedLeftMs = DURATION_MS;
+        }
+        renderAllPools();
+        tickTimer();
+        renderEval();
+        highlightActiveWaveTabs();
+        updatePrepTargetVisual();
+
+        // Reprise du chrono si page rechargée pendant une vague
+        if (state.timerEndAt != null) {
+          if (Date.now() >= state.timerEndAt) {
+            state.timerEndAt = null;
+            state.timerPausedLeftMs = 0;
+            onTimerFinished();
+          } else {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(tickTimer, 200);
+            tickTimer();
+          }
+        }
+
+        setInterval(saveStorage, 30000);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+      } else {
+        boot();
+      }
+    })();
+  </script>
+</body>
+</html>
