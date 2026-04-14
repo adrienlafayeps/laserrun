@@ -94,16 +94,38 @@
       position: sticky; top: 0; z-index: 100;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
     }
-    .toolbar h1 {
-      font-size: 1.05rem; margin: 0; flex: 1 1 100%;
-      font-weight: 800; letter-spacing: -0.02em;
+    /* Titre + icône (fichier local = visible hors ligne) */
+    .toolbar-brand {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      flex-wrap: wrap;
+      padding: 4px 0 8px;
+    }
+    .toolbar-app-icon {
+      width: clamp(76px, 18vw, 112px);
+      height: clamp(76px, 18vw, 112px);
+      border-radius: 20px;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45);
+      border: 3px solid rgba(148, 163, 184, 0.35);
+      background: var(--surface-solid);
+    }
+    .toolbar-title {
+      margin: 0;
+      font-size: clamp(1.65rem, 6.5vw, 2.5rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      text-align: center;
       background: linear-gradient(105deg, #f8fafc 0%, var(--accent) 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-    }
-    @media (min-width: 700px) {
-      .toolbar h1 { flex: 0 1 auto; font-size: 1.2rem; }
     }
     .btn {
       border: none; border-radius: 10px; padding: 12px 16px; font-size: 1rem; font-weight: 600;
@@ -141,6 +163,23 @@
     .tab {
       flex: 1; min-width: 100px; padding: 12px; border-radius: 10px; border: 2px solid var(--border);
       background: var(--surface); font-weight: 700; cursor: pointer; color: var(--text);
+    }
+    /* Onglets principal Préparation / Évaluation / Résultats : plus grands */
+    .toolbar .tabs > .tab {
+      min-width: 108px;
+      padding: 16px 12px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      min-height: 56px;
+      letter-spacing: -0.01em;
+    }
+    @media (min-width: 700px) {
+      .toolbar .tabs > .tab {
+        font-size: 1.32rem;
+        padding: 18px 16px;
+        min-height: 60px;
+        min-width: 120px;
+      }
     }
     .tab.active { border-color: var(--accent); background: var(--accent); color: #fff; }
     /* Vague active en préparation : surlignage distinct */
@@ -498,7 +537,18 @@
        Barre d’outils — accès rapide terrain
        ============================================================================= -->
   <header class="toolbar">
-    <h1>Laser Run — Évaluation simultanée</h1>
+    <div class="toolbar-brand">
+      <img
+        class="toolbar-app-icon"
+        src="apple-touch-icon.png"
+        width="112"
+        height="112"
+        alt="Laser Run"
+        decoding="async"
+        fetchpriority="high"
+      />
+      <h1 class="toolbar-title">Laser Run</h1>
+    </div>
     <div class="tabs" role="tablist" aria-label="Sections">
       <button type="button" class="tab active" data-tab="setup">Préparation</button>
       <button type="button" class="tab" data-tab="eval">Évaluation</button>
