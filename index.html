@@ -40,6 +40,10 @@
       --wave-d: #2dd4bf;
       --wave-e: #f472b6;
       --wave-f: #facc15;
+      --wave-g: #22d3ee;
+      --wave-h: #84cc16;
+      --wave-i: #e879f9;
+      --wave-j: #94a3b8;
       --timer-bg: linear-gradient(145deg, #020617 0%, #0f172a 50%, #020617 100%);
       --timer-fg: #f8fafc;
       --shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
@@ -50,6 +54,10 @@
       --tir-bg-hover: #243044;
       --tir-fg: #cbd5e1;
       --tir-border: #334155;
+      --glass-bg: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.88));
+      --glass-border: rgba(148, 163, 184, 0.22);
+      --panel-glow: 0 18px 46px rgba(2, 6, 23, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      --btn-shadow: 0 10px 22px rgba(14, 165, 233, 0.35);
     }
 
     * { box-sizing: border-box; }
@@ -62,6 +70,36 @@
     }
     body {
       transition: background 0.4s ease, background-image 0.4s ease;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      border-radius: 999px;
+      filter: blur(70px);
+      z-index: -1;
+      opacity: 0.34;
+    }
+    body::before {
+      width: 38vw;
+      height: 38vw;
+      min-width: 260px;
+      min-height: 260px;
+      right: -12vw;
+      top: -9vh;
+      background: radial-gradient(circle at center, rgba(56, 189, 248, 0.8) 0%, rgba(56, 189, 248, 0) 70%);
+    }
+    body::after {
+      width: 32vw;
+      height: 32vw;
+      min-width: 220px;
+      min-height: 220px;
+      left: -10vw;
+      bottom: -12vh;
+      background: radial-gradient(circle at center, rgba(167, 139, 250, 0.72) 0%, rgba(167, 139, 250, 0) 70%);
     }
     /* Teinte de toute la page selon la vague d’évaluation sélectionnée */
     body[data-active-wave="A"] {
@@ -82,17 +120,29 @@
     body[data-active-wave="F"] {
       background-image: linear-gradient(165deg, rgba(250, 204, 21, 0.18) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
     }
+    body[data-active-wave="G"] {
+      background-image: linear-gradient(165deg, rgba(34, 211, 238, 0.2) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
+    }
+    body[data-active-wave="H"] {
+      background-image: linear-gradient(165deg, rgba(132, 204, 22, 0.2) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
+    }
+    body[data-active-wave="I"] {
+      background-image: linear-gradient(165deg, rgba(232, 121, 249, 0.2) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
+    }
+    body[data-active-wave="J"] {
+      background-image: linear-gradient(165deg, rgba(148, 163, 184, 0.22) 0%, var(--bg-grad-mid) 46%, var(--bg) 100%);
+    }
 
     /* Barre d’outils */
     .toolbar {
       display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-      padding: 12px 16px;
-      background: var(--surface);
+      padding: 14px 18px;
+      background: var(--glass-bg);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--glass-border);
       position: sticky; top: 0; z-index: 100;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 6px 28px rgba(2, 6, 23, 0.4);
     }
     /* Titre + icône (fichier local = visible hors ligne) */
     .toolbar-brand {
@@ -111,8 +161,8 @@
       border-radius: 20px;
       object-fit: cover;
       flex-shrink: 0;
-      box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45);
-      border: 3px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 10px 34px rgba(2, 6, 23, 0.5);
+      border: 3px solid rgba(148, 163, 184, 0.4);
       background: var(--surface-solid);
     }
     .toolbar-title {
@@ -128,12 +178,36 @@
       color: transparent;
     }
     .btn {
-      border: none; border-radius: 10px; padding: 12px 16px; font-size: 1rem; font-weight: 600;
-      cursor: pointer; background: var(--accent); color: #fff; min-height: 48px; touch-action: manipulation;
+      border: none; border-radius: 12px; padding: 12px 16px; font-size: 1rem; font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 55%, #0284c7 100%);
+      color: #fff;
+      min-height: 48px;
+      touch-action: manipulation;
+      box-shadow: var(--btn-shadow);
+      transition: transform 0.14s ease, box-shadow 0.2s ease, filter 0.2s ease;
     }
-    .btn:active { transform: scale(0.98); }
-    .btn.secondary { background: var(--surface); color: var(--accent); border: 2px solid var(--accent); }
-    .btn.danger { background: var(--danger); }
+    .btn:hover { filter: brightness(1.05); box-shadow: 0 14px 30px rgba(14, 165, 233, 0.42); }
+    .btn:active { transform: translateY(1px) scale(0.985); }
+    .btn.secondary {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.92));
+      color: #cbeafe;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      box-shadow: 0 8px 20px rgba(2, 6, 23, 0.35);
+    }
+    .btn.danger {
+      background: linear-gradient(135deg, #f87171 0%, #ef4444 55%, #dc2626 100%);
+      box-shadow: 0 10px 24px rgba(239, 68, 68, 0.35);
+    }
+    .btn.undo-soft {
+      background: linear-gradient(135deg, #fda4af 0%, #fb7185 55%, #f43f5e 100%);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(244, 63, 94, 0.3);
+    }
+    .btn.undo-soft:hover {
+      box-shadow: 0 14px 30px rgba(244, 63, 94, 0.38);
+      filter: brightness(1.04);
+    }
     .btn.small { padding: 8px 12px; min-height: 44px; font-size: 0.9rem; }
     .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
     /* Passage actif (1 ou 2) : deux boutons bien visibles, sans badge */
@@ -147,40 +221,54 @@
     @media (min-width: 700px) {
       .toolbar-eval-only { width: auto; flex: 0 1 auto; }
     }
-    /* Vague cible sélectionnée pour le clic depuis la liste complète */
+    /* Vague cible sélectionnée pour le clic sur une carte élève */
     .prep-target.selected { outline: 3px solid var(--warn); box-shadow: 0 0 0 2px var(--surface); }
 
     .manual-import { margin-top: 14px; }
     .manual-import label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.95rem; }
-    .manual-import textarea {
-      width: 100%; min-height: 120px; padding: 10px; font-size: 1rem; font-family: inherit;
-      border: 2px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); resize: vertical;
+    .manual-import-row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .manual-import-row textarea {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 84px;
+      padding: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      resize: vertical;
+    }
+    .manual-import-row #btn-add-manual {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 8.5rem;
+      min-height: 0;
+      height: auto;
+      align-self: stretch;
     }
 
     .tabs {
       display: flex; gap: 6px; flex-wrap: wrap; width: 100%;
     }
     .tab {
-      flex: 1; min-width: 100px; padding: 12px; border-radius: 10px; border: 2px solid var(--border);
-      background: var(--surface); font-weight: 700; cursor: pointer; color: var(--text);
+      flex: 1; min-width: 100px; padding: 12px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.24);
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.92));
+      font-weight: 700; cursor: pointer; color: var(--text);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      transition: transform 0.15s ease, border-color 0.2s ease, filter 0.2s ease;
     }
-    /* Onglets principal Préparation / Évaluation / Résultats : plus grands */
-    .toolbar .tabs > .tab {
-      min-width: 108px;
-      padding: 16px 12px;
-      font-size: 1.2rem;
-      font-weight: 800;
-      min-height: 56px;
-      letter-spacing: -0.01em;
-    }
-    @media (min-width: 700px) {
-      .toolbar .tabs > .tab {
-        font-size: 1.32rem;
-        padding: 18px 16px;
-        min-height: 60px;
-        min-width: 120px;
-      }
-    }
+    .tab:hover { transform: translateY(-1px); border-color: rgba(56, 189, 248, 0.4); }
     .tab.active { border-color: var(--accent); background: var(--accent); color: #fff; }
     /* Vague active en préparation : surlignage distinct */
     .tab.wave-active-prep { box-shadow: 0 0 0 3px var(--warn); }
@@ -190,31 +278,53 @@
     .tab.wave-d.active { background: var(--wave-d); border-color: var(--wave-d); color: #0f172a; }
     .tab.wave-e.active { background: var(--wave-e); border-color: var(--wave-e); color: #0f172a; }
     .tab.wave-f.active { background: var(--wave-f); border-color: var(--wave-f); color: #0f172a; }
+    .tab.wave-g.active { background: var(--wave-g); border-color: var(--wave-g); color: #0f172a; }
+    .tab.wave-h.active { background: var(--wave-h); border-color: var(--wave-h); color: #0f172a; }
+    .tab.wave-i.active { background: var(--wave-i); border-color: var(--wave-i); color: #0f172a; }
+    .tab.wave-j.active { background: var(--wave-j); border-color: var(--wave-j); color: #0f172a; }
 
-    main { padding: 14px 16px 28px; max-width: 1200px; margin: 0 auto; }
+    main { padding: 16px 18px 32px; max-width: 1240px; margin: 0 auto; box-sizing: border-box; }
+    /* Écran évaluation : pleine largeur pour afficher plus d’élèves côte à côte */
+    body[data-screen="eval"] main {
+      max-width: none;
+      width: 100%;
+      padding-left: 8px;
+      padding-right: 8px;
+    }
 
     .panel {
-      background: var(--surface);
+      background: var(--glass-bg);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      border-radius: var(--radius);
-      padding: 18px 20px;
-      margin-bottom: 16px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-panel);
+      border-radius: 20px;
+      padding: 20px 22px;
+      margin-bottom: 18px;
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--panel-glow);
     }
-    .panel h2 { margin: 0 0 14px; font-size: 1.08rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: clamp(1.02rem, 2.4vw, 1.22rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #e2e8f0;
+    }
 
     /* Import CSV */
     .import-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     input[type="file"] { font-size: 0.95rem; max-width: 100%; }
 
-    /* Liste élèves + vagues */
+    /* Répartition en vagues */
     .pool {
-      min-height: 80px; padding: 10px; border: 2px dashed var(--border); border-radius: 10px;
-      background: var(--bg); transition: background 0.2s, border-color 0.2s;
+      min-height: 86px; padding: 12px; border: 2px dashed rgba(148, 163, 184, 0.24); border-radius: 14px;
+      background: linear-gradient(155deg, rgba(2, 6, 23, 0.42), rgba(15, 23, 42, 0.46));
+      transition: background 0.2s, border-color 0.2s, transform 0.16s ease;
     }
-    .pool.drag-over { border-color: var(--accent); background: var(--success-bg); }
+    .pool.drag-over {
+      border-color: var(--accent);
+      background: linear-gradient(155deg, rgba(16, 185, 129, 0.18), rgba(14, 165, 233, 0.18));
+      transform: scale(1.01);
+    }
     .pool-title { font-weight: 800; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
     .chips { display: flex; flex-wrap: wrap; gap: 6px; }
     .chip {
@@ -227,12 +337,54 @@
       font-weight: 600;
       user-select: none;
       touch-action: manipulation;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+      box-shadow: 0 6px 12px rgba(2, 6, 23, 0.25);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .chip:hover { box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08); }
+    .chip:hover { box-shadow: 0 10px 20px rgba(2, 6, 23, 0.3); transform: translateY(-1px); }
     .chip:active { cursor: grabbing; }
     .chip.dragging { opacity: 0.5; }
+    .chip.chip--marked-delete {
+      outline: 3px solid var(--danger);
+      box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.35);
+      background: rgba(248, 113, 113, 0.12);
+    }
+    .wave-count-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 12px;
+    }
+    .wave-count-row .wave-count-hint {
+      flex: 1 1 100%;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .prep-roster-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-left: auto;
+    }
+    .prep-bulk-delete-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(248, 113, 113, 0.45);
+      background: rgba(248, 113, 113, 0.08);
+    }
+    .prep-bulk-delete-bar .prep-bulk-delete-msg {
+      flex: 1 1 200px;
+      font-size: 0.88rem;
+      color: var(--text);
+      margin: 0;
+    }
     .waves-grid {
       display: grid; gap: 12px;
       grid-template-columns: 1fr;
@@ -249,8 +401,8 @@
       padding: 20px 22px;
       border-radius: var(--radius);
       margin-bottom: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 40px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 16px 42px rgba(0, 0, 0, 0.3);
     }
     .timer-display {
       font-variant-numeric: tabular-nums; font-size: clamp(2.5rem, 10vw, 4.5rem); font-weight: 900; letter-spacing: 0.04em;
@@ -275,16 +427,234 @@
     .eval-columns {
       display: flex; gap: 10px; align-items: stretch;
     }
+    body[data-screen="eval"] .eval-scroll {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    body[data-screen="eval"] .eval-columns {
+      gap: 6px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    body[data-screen="eval"] #eval-panel {
+      width: 100%;
+      max-width: none;
+      box-sizing: border-box;
+    }
     .student-col {
       flex: 0 0 auto; width: min(210px, 44vw); min-width: 156px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      background: linear-gradient(150deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 18px;
       padding: 12px 12px 14px;
       display: flex; flex-direction: column; gap: 10px;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 12px 28px rgba(2, 6, 23, 0.35);
+    }
+    /* Largeur partagée : peu d’élèves → colonnes plus larges ; beaucoup → min. puis défilement */
+    body[data-screen="eval"] .student-col {
+      flex: 1 1 0;
+      width: 0;
+      min-width: 88px;
+      max-width: none;
+      padding: 8px 8px 10px;
+      gap: 7px;
+    }
+    body[data-screen="eval"] .student-head {
+      padding-bottom: 8px;
+      margin-bottom: 2px;
+    }
+    body[data-screen="eval"] .student-col .name {
+      font-size: clamp(0.78rem, 2vw, 0.98rem);
+    }
+    body[data-screen="eval"] .tir-porte-paire {
+      padding: 7px 5px 8px;
+    }
+    /* Colonnes étroites : 6 boutons sur 1 ligne rendait 0–5 illisibles → 2 colonnes × 3 lignes */
+    body[data-screen="eval"] .tir-pick-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 5px;
+    }
+    body[data-screen="eval"] .tir-pick-btn {
+      min-height: 36px;
+      min-width: 0;
+      padding: 3px 2px;
+      font-size: clamp(0.82rem, 2.6vw, 1.02rem);
+    }
+    body[data-screen="eval"] .pass-display {
+      font-size: clamp(1.15rem, 4.2vw, 1.45rem);
+      padding: 5px 3px 6px;
+      line-height: 1.1;
+    }
+    /* Portes : grille 4 colonnes ; 0 puis 1–7 ; le 8 en pleine largeur (tour complet) */
+    .porte-pick-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 5px 6px;
+      margin: 6px 0 2px;
+    }
+    .porte-pick-row .porte-pick-wide {
+      grid-column: 1 / -1;
+    }
+    .porte-pick-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      min-height: 44px;
+      min-width: 0;
+      padding: 2px 4px;
+      font-size: clamp(0.9rem, 3vw, 1.05rem);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .porte-pick-btn.porte-pick-btn--active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.45);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    body[data-screen="eval"] .porte-pick-row {
+      gap: 3px 4px;
+      margin: 4px 0 2px;
+    }
+    body[data-screen="eval"] .porte-pick-btn {
+      min-height: 32px;
+      font-size: clamp(0.75rem, 2.4vw, 0.92rem);
+    }
+    body[data-screen="eval"] .tir-porte-paire .portes-title.portes-title--compact {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      font-size: clamp(0.65rem, 2.2vw, 0.8rem);
+      line-height: 1.25;
+      word-break: break-word;
+      hyphens: manual;
+    }
+    body[data-screen="eval"] .tir-nums-row-label {
+      font-size: 0.6rem;
+      margin: 6px 0 4px;
     }
     .student-col.locked { opacity: 0.72; pointer-events: none; filter: grayscale(0.15); }
+    /* Série verrouillée (déjà validée ou pas encore accessible) */
+    .tir-porte-paire.tir-porte-paire--locked {
+      opacity: 0.52;
+      pointer-events: none;
+      filter: grayscale(0.12);
+    }
+    .tir-porte-paire.tir-porte-paire--current {
+      outline: 2px solid rgba(251, 191, 36, 0.55);
+      outline-offset: 2px;
+      border-radius: 16px;
+    }
+    /* Série active : tir et portes se déverrouillent l’un après l’autre */
+    .tir-sub,
+    .course-sub {
+      transition: all 0.18s ease;
+    }
+    /* Différenciation visuelle forte : TIR (bleu) vs COURSE (orange) */
+    .tir-sub {
+      border: 1px solid rgba(56, 189, 248, 0.34);
+      border-left: 4px solid #38bdf8;
+      border-radius: 12px;
+      padding: 6px 6px 7px;
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .course-sub {
+      border: 1px solid rgba(251, 146, 60, 0.34);
+      border-left: 4px solid #fb923c;
+      border-radius: 12px;
+      background: rgba(251, 146, 60, 0.08);
+    }
+    .tir-sub .tir-nums-row-label {
+      color: #7dd3fc;
+    }
+    .course-sub .portes-title {
+      color: #fdba74;
+    }
+    .tir-sub .tir-readonly-rt {
+      background: rgba(14, 116, 144, 0.28);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .course-sub .pass-display {
+      background: rgba(154, 52, 18, 0.24);
+      border-color: rgba(251, 146, 60, 0.42);
+    }
+    .tir-sub:not(.tir-sub--expanded) .tir-readonly-rt {
+      font-size: 0.9rem;
+      padding: 6px 4px;
+    }
+    .tir-sub:not(.tir-sub--expanded) .tir-nums-row-label {
+      margin-bottom: 4px;
+    }
+    .tir-porte-paire .student-col-course.course-sub {
+      margin-top: 6px;
+      padding: 6px 5px 5px;
+    }
+    .tir-porte-paire .student-col-course.course-sub.course-sub--expanded {
+      margin-top: 10px;
+      padding: 10px 6px 8px;
+    }
+    .course-sub:not(.course-sub--expanded) .porte-pick-row {
+      display: none;
+    }
+    .course-sub:not(.course-sub--expanded) .portes-title {
+      margin-bottom: 4px;
+    }
+    .course-sub:not(.course-sub--expanded) .pass-display {
+      font-size: 1.35rem;
+      padding: 6px 4px;
+    }
+    .tir-porte-paire .tir-sub--locked,
+    .tir-porte-paire .course-sub--locked {
+      opacity: 0.55;
+      pointer-events: none;
+      filter: grayscale(0.1);
+      user-select: none;
+    }
+    .tir-sub .tir-nums-row-label:first-child {
+      margin-top: 0;
+    }
+
+    .tir-readonly-rt {
+      text-align: center;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 8px 4px;
+      color: var(--text);
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.25);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+    .tir-readonly-rt--empty {
+      opacity: 0.45;
+      font-weight: 600;
+    }
+    .tir-posttimer-wrap {
+      margin-top: 2px;
+    }
+    .tir-pick-row-label-aux {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin: 8px 0 4px;
+    }
+    .tir-pick-row--posttimer {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 4px 5px;
+      margin-top: 2px;
+    }
+    body[data-screen="eval"] .tir-pick-row--posttimer {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 
     .student-head {
       text-align: center;
@@ -312,136 +682,146 @@
       white-space: nowrap;
     }
 
-    /* Zone « tirs » vs « portes » dans chaque colonne élève */
-    .student-col-tirs {
+    /* Bloc répété : choix tirs réussis (0–5) + portes */
+    .tir-porte-paire {
       padding: 10px 8px 12px;
-      margin: 2px 0 0;
       border-radius: 14px;
       background: rgba(15, 23, 42, 0.45);
       border: 1px solid rgba(148, 163, 184, 0.14);
     }
+    .tir-porte-paire .student-col-course {
+      margin-top: 6px;
+      padding: 6px 5px 5px;
+    }
+    .tir-porte-paire .student-col-course.course-sub.course-sub--expanded {
+      margin-top: 10px;
+      padding: 10px 6px 8px;
+    }
+    .tir-nums-row-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 10px 0 6px;
+    }
+    .tir-nums-row-label:first-child { margin-top: 0; }
+    .tir-pick-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .tir-pick-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      min-height: 46px;
+      padding: 2px;
+      font-size: clamp(0.95rem, 3.8vw, 1.15rem);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    .tir-pick-btn:active { transform: scale(0.96); }
+    /* Surlignage du score sélectionné : 0–1 rouge, 2–3 orange, 4–5 vert */
+    .tir-pick-btn--active {
+      font-weight: 900;
+      color: #fff;
+    }
+    .tir-pick-btn--active.tir-pick-btn--tier-01 {
+      background: linear-gradient(165deg, #f87171 0%, #dc2626 45%, #991b1b 100%);
+      border-color: #fecaca;
+      box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.45), 0 4px 14px rgba(220, 38, 38, 0.35);
+    }
+    .tir-pick-btn--active.tir-pick-btn--tier-23 {
+      background: linear-gradient(165deg, #fdba74 0%, #ea580c 50%, #9a3412 100%);
+      border-color: #fed7aa;
+      box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.4), 0 4px 14px rgba(234, 88, 12, 0.3);
+    }
+    .tir-pick-btn--active.tir-pick-btn--tier-45 {
+      background: linear-gradient(165deg, #4ade80 0%, #16a34a 45%, #14532d 100%);
+      border-color: #bbf7d0;
+      box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.45), 0 4px 14px rgba(22, 163, 74, 0.35);
+    }
+    .student-col-alternating {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
     .student-col-course {
       padding: 12px 8px 6px;
-      margin-top: 10px;
+      margin-top: 4px;
       border-radius: 14px;
       background: rgba(56, 189, 248, 0.07);
       border: 1px solid rgba(56, 189, 248, 0.2);
     }
 
-    /* Bloc série de tir (réussis / tentés, max 5 tirs par série) */
-    .serie-block { border-radius: 12px; padding: 8px 6px; background: rgba(0, 0, 0, 0.18); }
-    .serie-line {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      margin-bottom: 8px;
-      color: var(--text);
-      border-radius: 10px;
-      padding: 8px 6px;
-      border: 2px solid transparent;
-      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-    }
-    .serie-line-title {
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 6px;
-    }
-    .serie-line-scores {
-      font-variant-numeric: tabular-nums;
-      line-height: 1.15;
-    }
-    /* Série complète : 5 tirs tentés (x / 5) */
-    .serie-line.serie-line-complete {
-      border: 2px dashed rgba(248, 113, 113, 0.7);
-      background: rgba(248, 113, 113, 0.08);
-      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.15) inset;
-    }
-    .serie-line .sep { color: var(--muted); font-weight: 600; margin: 0 6px; font-size: 1rem; }
-    .serie-line .big {
-      font-size: 1.38rem;
-      font-weight: 900;
-      color: var(--accent);
-    }
-    .serie-actions { display: flex; flex-direction: column; gap: 5px; }
-    .serie-btn {
-      min-height: 44px;
-      padding: 6px 8px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      line-height: 1.15;
-      text-align: center;
-      border-radius: 10px;
-      border: 1px solid var(--tir-border);
-      background: var(--tir-bg);
-      color: var(--tir-fg);
-      cursor: pointer;
-      touch-action: manipulation;
-      transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
-    }
-    .serie-btn:hover { background: var(--tir-bg-hover); border-color: #475569; }
-    .serie-btn:active { transform: scale(0.98); }
-    .serie-btn.serie-btn-reussi {
-      background: linear-gradient(165deg, #16a34a 0%, #15803d 55%, #166534 100%);
-      color: #ecfdf5;
-      border-color: #4ade80;
-      box-shadow: 0 2px 12px rgba(34, 197, 94, 0.25);
-    }
-    .serie-btn.serie-btn-reussi:hover {
-      background: linear-gradient(165deg, #22c55e 0%, #16a34a 100%);
-      border-color: #86efac;
-    }
-    .serie-btn.serie-btn-undo {
-      border-color: rgba(248, 113, 113, 0.45);
-      color: #fecaca;
-      background: rgba(127, 29, 29, 0.35);
-      font-size: 0.65rem;
-      line-height: 1.2;
-      min-height: 50px;
-      white-space: normal;
-    }
-    .serie-total {
-      margin-top: 8px;
-      padding: 10px 8px 12px;
-      text-align: center;
-      border-radius: 12px;
-      background: var(--accent-soft);
-      color: var(--text);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-    }
-    .serie-total-prefix {
-      display: block;
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 6px;
-    }
-    .serie-total-nums {
-      font-variant-numeric: tabular-nums;
-    }
-    .serie-total .big { font-size: 1.28rem; font-weight: 900; color: var(--accent); }
-    .serie-total .sep { color: var(--muted); font-weight: 600; margin: 0 6px; font-size: 1rem; }
-
-    .eval-toolbar {
+    /* Titre saisie multi-élèves + bouton réinit. vague sur une même ligne */
+    .eval-saisie-heading {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px dashed var(--border);
+      justify-content: space-between;
+      gap: 10px 14px;
+      margin-bottom: 12px;
     }
-    .eval-toolbar .hint { font-size: 0.82rem; color: var(--muted); max-width: 520px; line-height: 1.35; }
+    .eval-saisie-heading h2 {
+      margin: 0;
+      flex: 1 1 auto;
+      min-width: 0;
+      font-size: clamp(1rem, 3.2vw, 1.12rem);
+      line-height: 1.25;
+    }
+    .eval-saisie-heading #btn-reset-wave-scores {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+    .eval-saisie-heading .eval-saisie-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* Navigation flux Préparation ↔ Évaluation ↔ Résultats (sans onglets header) */
+    .app-flow-nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.72), rgba(15, 23, 42, 0.7));
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    .app-flow-nav .app-flow-nav-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .prep-cta-panel {
+      text-align: center;
+      padding: 22px 16px 8px;
+    }
+    .prep-cta-panel .btn {
+      min-height: 52px;
+      font-size: 1.08rem;
+    }
 
     .student-col-course .course-box { margin-top: 0; }
     .course-box { margin-top: 6px; }
+    .course-box.course-box--compact { margin-top: 2px; }
     .portes-title {
       text-align: center;
       font-size: 1.05rem;
@@ -451,11 +831,28 @@
       color: var(--muted);
       margin-bottom: 8px;
     }
+    /* Libellé portes : plus lisible, une seule ligne (s’adapte à la largeur colonne) */
+    .tir-porte-paire .portes-title.portes-title--compact {
+      font-size: clamp(0.8rem, 3.6vw, 1.02rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-transform: none;
+      margin-bottom: 6px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
     .pass-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
       font-size: 2.15rem;
       font-weight: 900;
       font-variant-numeric: tabular-nums;
+      line-height: 1;
       padding: 10px 8px;
       border-radius: 10px;
       background: rgba(15, 23, 42, 0.35);
@@ -464,22 +861,31 @@
     }
     .pass-display.ok { background: var(--success-bg); border-color: var(--success); color: var(--success); }
     .pass-display.bad { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
-    .pass-step-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 6px 0; }
-    .pass-step-row button { min-height: 46px; font-weight: 800; font-size: 0.95rem; border-radius: 8px; border: 2px solid var(--border); background: var(--surface); touch-action: manipulation; }
-    .pass-num-input {
-      width: 100%; min-height: 48px; font-size: 1.35rem; font-weight: 800; text-align: center;
-      border: 2px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text);
-      font-variant-numeric: tabular-nums; margin-top: 4px;
-    }
-    .pass-quick-8 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 6px; }
-    .pass-quick-8 button { min-height: 42px; font-weight: 800; font-size: 0.85rem; border-radius: 6px; border: 2px solid var(--border); background: var(--surface); touch-action: manipulation; }
-
     /* Tableau résultats */
-    .results-wrap { overflow-x: auto; }
-    table.results { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    table.results th, table.results td { border: 1px solid var(--border); padding: 8px; text-align: center; }
-    table.results th { background: var(--bg); }
-    table.results tr:nth-child(even) { background: rgba(255, 255, 255, 0.04); }
+    .results-wrap {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    table.results {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.93rem;
+      background: rgba(15, 23, 42, 0.4);
+    }
+    table.results th, table.results td {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      padding: 11px 10px;
+      text-align: center;
+    }
+    table.results th {
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+      color: #bae6fd;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+    table.results tr:nth-child(even) { background: rgba(148, 163, 184, 0.06); }
+    table.results tr:hover { background: rgba(56, 189, 248, 0.09); }
     .score-cell { font-weight: 800; }
     .score-cell.good { color: var(--success); }
     .score-cell.bad { color: var(--danger); }
@@ -501,11 +907,11 @@
     .modal-box {
       max-width: 440px;
       width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      background: linear-gradient(150deg, rgba(30, 41, 59, 0.96), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 20px;
       padding: 22px;
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
     .modal-box h3 { margin: 0 0 12px; font-size: 1.12rem; font-weight: 800; }
     .modal-box .modal-msg { margin: 0 0 20px; color: var(--text); line-height: 1.5; white-space: pre-wrap; }
@@ -530,9 +936,16 @@
       body { background: #fff; color: #000; }
       .panel { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
     }
+    @media (min-width: 768px) {
+      .btn { min-height: 50px; }
+      .btn.small { min-height: 42px; }
+      .panel { padding: 22px 24px; }
+      .toolbar { padding-left: 22px; padding-right: 22px; }
+      .eval-saisie-heading h2 { font-size: clamp(1.06rem, 1.8vw, 1.24rem); }
+    }
   </style>
 </head>
-<body>
+<body data-screen="setup">
   <!-- =============================================================================
        Barre d’outils — accès rapide terrain
        ============================================================================= -->
@@ -549,11 +962,6 @@
       />
       <h1 class="toolbar-title">Laser Run</h1>
     </div>
-    <div class="tabs" role="tablist" aria-label="Sections">
-      <button type="button" class="tab active" data-tab="setup">Préparation</button>
-      <button type="button" class="tab" data-tab="eval">Évaluation</button>
-      <button type="button" class="tab" data-tab="results">Résultats</button>
-    </div>
     <div id="toolbar-eval-only" class="toolbar-eval-only hidden" aria-hidden="true">
       <button type="button" class="btn small secondary" id="btn-fs">Plein écran</button>
       <button type="button" class="btn secondary passage-toggle active-passage" id="btn-passage1" title="Saisie passage 1">Passage 1</button>
@@ -568,38 +976,48 @@
         <h2>1. Import des élèves (CSV : Nom;Prénom)</h2>
         <div class="import-row">
           <input type="file" id="csv-file" accept=".csv,text/csv" />
-          <button type="button" class="btn secondary small" id="btn-sample">Charger un exemple</button>
-          <button type="button" class="btn danger small" id="btn-clear-students">Vider la liste</button>
         </div>
         <div class="manual-import">
           <label for="manual-students">Ou saisir à la main (une ligne = un élève)</label>
-          <textarea id="manual-students" rows="6" spellcheck="false" placeholder="Un prénom par ligne, par exemple :&#10;Chloé&#10;Bruno&#10;&#10;Vous pouvez aussi écrire Nom;Prénom ou Nom Prénom."></textarea>
-          <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+          <div class="manual-import-row">
+            <textarea id="manual-students" rows="4" spellcheck="false" placeholder="Un prénom par ligne, par exemple :&#10;Chloé&#10;Bruno"></textarea>
             <button type="button" class="btn small" id="btn-add-manual">Ajouter à la liste</button>
-            <span style="color:var(--muted);font-size:0.85rem;">Prénom seul → nom affiché « — ». Ligne <code>Nom;Prénom</code> ou <code>Nom Prénom</code> acceptée.</span>
           </div>
         </div>
-        <p style="color:var(--muted);font-size:0.9rem;margin-top:8px;">
-          Fichier CSV : séparateur <strong>;</strong> ou <strong>,</strong>. Une ligne d’en-tête optionnelle (nom/prénom) est ignorée.
-        </p>
       </div>
 
       <div class="panel">
-        <h2>2. Liste complète (effectif <span id="count-all">0</span>)</h2>
-        <div class="results-wrap" style="max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;">
-          <table class="results" id="roster-table" aria-label="Liste de tous les élèves">
-            <thead>
-              <tr><th>Nom</th><th>Prénom</th><th>Vague</th></tr>
-            </thead>
-            <tbody id="roster-body"></tbody>
-          </table>
+        <h2>2. Répartition en vagues (clic ou glisser-déposer)</h2>
+        <div id="prep-bulk-delete-bar" class="prep-bulk-delete-bar no-print hidden" role="region" aria-label="Sélection pour suppression">
+          <p class="prep-bulk-delete-msg">
+            Cliquez sur les cartes élèves pour les sélectionner ou les désélectionner, puis validez la suppression.
+          </p>
+          <span style="font-weight:800;font-size:0.95rem;">Sélection : <span id="prep-bulk-delete-count">0</span></span>
+          <button type="button" class="btn secondary small" id="prep-bulk-delete-cancel">Annuler</button>
+          <button type="button" class="btn danger small" id="prep-bulk-delete-confirm" disabled>Supprimer la sélection</button>
         </div>
-      </div>
-
-      <div class="panel">
-        <h2>3. Répartition en vagues (clic ou glisser-déposer)</h2>
+        <div class="wave-count-row">
+          <label for="wave-count" style="font-weight:700;">Nombre de vagues</label>
+          <select id="wave-count" class="btn secondary small" style="padding:6px 12px;cursor:pointer;font:inherit;">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+          <div class="prep-roster-actions">
+            <button type="button" class="btn danger small" id="btn-clear-students">Vider la liste</button>
+            <button type="button" class="btn small undo-soft" id="btn-bulk-delete-students">Supprimer des élèves</button>
+          </div>
+          <p class="wave-count-hint">Les vagues au-delà du nombre choisi sont masquées ; les élèves qui y étaient repassent en « Non assignés ».</p>
+        </div>
         <p style="margin-top:0;color:var(--muted);font-size:0.9rem;">
-          Choisissez une vague cible (A à F), puis cliquez une carte élève pour l’y envoyer, ou glissez-déposez les cartes entre les zones.
+          Choisissez une vague cible, puis cliquez une carte élève pour l’y envoyer, ou glissez-déposez les cartes entre les zones.
         </p>
         <div style="margin:10px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
           <span>Clic sur un élève → envoi vers :</span>
@@ -609,6 +1027,10 @@
           <button type="button" class="btn small secondary prep-target" id="prep-wave-d" data-prep-wave="D" style="border-color:var(--wave-d);color:var(--wave-d)">Vague D</button>
           <button type="button" class="btn small secondary prep-target" id="prep-wave-e" data-prep-wave="E" style="border-color:var(--wave-e);color:var(--wave-e)">Vague E</button>
           <button type="button" class="btn small secondary prep-target" id="prep-wave-f" data-prep-wave="F" style="border-color:var(--wave-f);color:var(--wave-f)">Vague F</button>
+          <button type="button" class="btn small secondary prep-target" id="prep-wave-g" data-prep-wave="G" style="border-color:var(--wave-g);color:var(--wave-g)">Vague G</button>
+          <button type="button" class="btn small secondary prep-target" id="prep-wave-h" data-prep-wave="H" style="border-color:var(--wave-h);color:var(--wave-h)">Vague H</button>
+          <button type="button" class="btn small secondary prep-target" id="prep-wave-i" data-prep-wave="I" style="border-color:var(--wave-i);color:var(--wave-i)">Vague I</button>
+          <button type="button" class="btn small secondary prep-target" id="prep-wave-j" data-prep-wave="J" style="border-color:var(--wave-j);color:var(--wave-j)">Vague J</button>
           <button type="button" class="btn small secondary prep-target" id="prep-wave-u" data-prep-wave="__unassigned__">Non assignés</button>
         </div>
         <div class="waves-grid">
@@ -636,16 +1058,42 @@
             <div class="pool-title" style="color:var(--wave-f)">Vague F <span id="count-F">0</span></div>
             <div class="chips" id="chips-F"></div>
           </div>
+          <div class="pool" data-wave="G" id="pool-G">
+            <div class="pool-title" style="color:var(--wave-g)">Vague G <span id="count-G">0</span></div>
+            <div class="chips" id="chips-G"></div>
+          </div>
+          <div class="pool" data-wave="H" id="pool-H">
+            <div class="pool-title" style="color:var(--wave-h)">Vague H <span id="count-H">0</span></div>
+            <div class="chips" id="chips-H"></div>
+          </div>
+          <div class="pool" data-wave="I" id="pool-I">
+            <div class="pool-title" style="color:var(--wave-i)">Vague I <span id="count-I">0</span></div>
+            <div class="chips" id="chips-I"></div>
+          </div>
+          <div class="pool" data-wave="J" id="pool-J">
+            <div class="pool-title" style="color:var(--wave-j)">Vague J <span id="count-J">0</span></div>
+            <div class="chips" id="chips-J"></div>
+          </div>
           <div class="pool" data-wave="__unassigned__" id="pool-unassigned">
             <div class="pool-title"><span>Non assignés</span><span id="count-U">0</span></div>
             <div class="chips" id="chips-U"></div>
           </div>
         </div>
       </div>
+
+      <div class="panel prep-cta-panel no-print">
+        <button type="button" class="btn" id="btn-go-eval-from-prep">Commencer l’évaluation</button>
+      </div>
     </section>
 
     <!-- Onglet Évaluation -->
     <section id="tab-eval" class="tab-panel hidden">
+      <div class="app-flow-nav no-print">
+        <button type="button" class="btn secondary" id="btn-back-to-prep">← Préparation</button>
+        <div class="app-flow-nav-actions">
+          <button type="button" class="btn secondary small" id="btn-go-results">Résultats</button>
+        </div>
+      </div>
       <div class="panel no-print">
         <h2>Vague en cours & chronomètre (3 min)</h2>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
@@ -655,6 +1103,10 @@
           <button type="button" class="tab wave-d" data-select-wave="D" id="sel-D">Vague D</button>
           <button type="button" class="tab wave-e" data-select-wave="E" id="sel-E">Vague E</button>
           <button type="button" class="tab wave-f" data-select-wave="F" id="sel-F">Vague F</button>
+          <button type="button" class="tab wave-g" data-select-wave="G" id="sel-G">Vague G</button>
+          <button type="button" class="tab wave-h" data-select-wave="H" id="sel-H">Vague H</button>
+          <button type="button" class="tab wave-i" data-select-wave="I" id="sel-I">Vague I</button>
+          <button type="button" class="tab wave-j" data-select-wave="J" id="sel-J">Vague J</button>
         </div>
         <div class="timer-bar">
           <div>
@@ -669,12 +1121,14 @@
       </div>
 
       <div class="panel" id="eval-panel">
-        <h2>Saisie multi-élèves <span class="badge" id="eval-wave-label">Vague A</span></h2>
-        <div class="eval-toolbar no-print">
-          <button type="button" class="btn secondary" id="btn-reset-wave-scores">Réinitialiser la vague</button>
-          <span class="hint">Remet à <strong>0</strong> toutes les séries de tir et les portes pour la <strong>vague</strong> et le <strong>passage</strong> en cours. Un nouveau « Démarrer la vague » fait aussi cette remise à zéro automatiquement.</span>
+        <div class="eval-saisie-heading no-print">
+          <h2>Saisie multi-élèves <span class="badge" id="eval-wave-label">Vague A</span></h2>
+          <div class="eval-saisie-actions">
+            <button type="button" class="btn small undo-soft" id="btn-undo-last-eval" disabled>↶ Annuler dernière saisie</button>
+            <button type="button" class="btn secondary" id="btn-reset-wave-scores">Réinitialiser la vague</button>
+          </div>
         </div>
-        <p id="eval-empty" class="hidden" style="color:var(--muted);">Aucun élève dans cette vague. Assignez des élèves dans l’onglet Préparation.</p>
+        <p id="eval-empty" class="hidden" style="color:var(--muted);">Aucun élève dans cette vague. Revenez à la <strong>Préparation</strong> pour en assigner.</p>
         <div class="eval-scroll" id="eval-scroll">
           <div class="eval-columns" id="eval-columns"></div>
         </div>
@@ -683,22 +1137,21 @@
 
     <!-- Onglet Résultats -->
     <section id="tab-results" class="tab-panel hidden">
+      <div class="app-flow-nav no-print">
+        <button type="button" class="btn secondary" id="btn-back-to-eval-from-results">← Évaluation</button>
+      </div>
       <div class="panel">
         <h2>Récapitulatif & comparatif</h2>
         <p style="color:var(--muted);font-size:0.9rem;">
-          Score global = <strong>total tirs réussis</strong> + <strong>portes</strong> (max 32). Colonne tirs : <strong>réussis / tentés</strong> sur les 5 séries (5 tirs max par série).
+          Une ligne par élève : <strong>prénom</strong>, <strong>moyenne des 2 passages du pourcentage de réussite au tir</strong> (avec le détail réussis / tentés), et <strong>moyenne des portes</strong> sur les 2 passages.
         </p>
         <div class="results-wrap">
           <table class="results" id="results-table" aria-describedby="results-desc">
             <thead>
               <tr>
-                <th>Nom</th>
                 <th>Prénom</th>
-                <th>Vague</th>
-                <th>Passage</th>
-                <th>Tirs (réussis / tentés)</th>
-                <th>Passages</th>
-                <th>Score</th>
+                <th>Tir — moyenne des 2 passages</th>
+                <th>Portes — moyenne des 2 passages</th>
               </tr>
             </thead>
             <tbody id="results-body"></tbody>
@@ -727,13 +1180,24 @@
     </div>
   </div>
 
+  <div id="modal-reset-timer" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-reset-timer-title">
+    <div class="modal-box" id="modal-reset-timer-inner">
+      <h3 id="modal-reset-timer-title">Réinitialiser le chrono</h3>
+      <p class="modal-msg" id="modal-reset-timer-msg"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" id="modal-reset-timer-cancel">Annuler</button>
+        <button type="button" class="btn danger" id="modal-reset-timer-confirm">Réinitialiser le chrono</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function () {
       'use strict';
 
       /*
        * Application Laser Run (EPS) — fichier unique, sans backend.
-       * Flux : import CSV → répartition en vagues A–F → chronomètre 3 min →
+       * Flux : import CSV → répartition en vagues (1 à 10) → chronomètre 3 min →
        * saisie simultanée (5 séries réussis/tentés + portes) → passage 2 → résultats / export.
        * Données : localStorage (reprise après fermeture du navigateur).
        */
@@ -744,33 +1208,45 @@
       var STORAGE_KEY = 'laserRunEps_v1';
       /** Nombre max de portes (plusieurs tours de 8) */
       var MAX_PORTES = 32;
+      /** Choix rapide par série à l’évaluation : boutons 0 à 8 */
+      var MAX_PORTES_PICK = 8;
       /** Seuil visuel « bon » (ex. 3 tours complets de 8) */
       var PASS_GOOD = 24;
       /** Tirs maximum par série (5 séries par passage) */
       var MAX_TIRS_SERIE = 5;
-      /** Identifiants des 6 vagues */
-      var WAVE_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+      /** Nombre de blocs « tir réussi (0–5) + portes » par élève (séries 1 … N). Mettre 5 pour afficher les 5 séries. */
+      var EVAL_TIR_PORTE_PAIRS = 4;
+      /** Lettres des vagues (jusqu’à 10 affichées selon `state.waveCount`) */
+      var ALL_WAVE_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+      var MIN_WAVES = 1;
+      var MAX_WAVES = 10;
 
       /** @typedef {{ id: string, nom: string, prenom: string }} Student */
-      /** @typedef {'A'|'B'|'C'|'D'|'E'|'F'} WaveId */
+      /** @typedef {'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'} WaveId */
 
       /**
        * État global de l’application (sérialisé dans localStorage).
        * @type {{
        *   students: Student[],
        *   waves: Record<WaveId, string[]>,
+       *   waveCount: number,
        *   activeWave: WaveId,
        *   passage: 1|2,
-       *   scores: Record<string, { p1: { series: Array<{r:number,t:number,stack:string[]}>, passages: number }, p2: same }>,
+       *   scores: Record<string, { p1: { series: Array<{r:number,t:number,stack:string[],tirScoreChoisi?:boolean}>, passagesSeries: number[] }, p2: same }>,
        *   timerEndAt: number|null,
        *   timerPausedLeftMs: number|null,
        *   clickTargetWave: WaveId|'__unassigned__',
-       *   postWaveDiodesSummary: boolean
+       *   postWaveDiodesSummary: boolean,
+       *   postTimerEditableSerieByStudent: Record<string, number>|null,
+       *   prepBulkDeleteMode: boolean,
+       *   prepStudentIdsMarkedForDelete: Record<string, boolean>,
+       *   lastEvalEdit: { studentId: string, pk: 'p1'|'p2', block: any }|null
        * }}
        */
       var state = {
         students: [],
-        waves: { A: [], B: [], C: [], D: [], E: [], F: [] },
+        waves: { A: [], B: [], C: [], D: [], E: [], F: [], G: [], H: [], I: [], J: [] },
+        waveCount: 6,
         activeWave: 'A',
         passage: 1,
         scores: {},
@@ -778,8 +1254,97 @@
         timerPausedLeftMs: null,
         clickTargetWave: 'A',
         /** Affiche la somme des diodes (tirs) à côté du nom après fin de chrono */
-        postWaveDiodesSummary: false
+        postWaveDiodesSummary: false,
+        /** À la fin du chrono : indice de série saisissable par élève (figé pour cette fin de vague). */
+        postTimerEditableSerieByStudent: null,
+        prepBulkDeleteMode: false,
+        prepStudentIdsMarkedForDelete: {},
+        /** Undo simple (1 niveau) de la dernière saisie évaluation. */
+        lastEvalEdit: null
       };
+
+      function updateUndoLastEvalButton() {
+        var btn = document.getElementById('btn-undo-last-eval');
+        if (!btn) return;
+        var canUndo = !!state.lastEvalEdit;
+        btn.disabled = !canUndo;
+        btn.setAttribute('aria-disabled', canUndo ? 'false' : 'true');
+      }
+
+      function cloneScoreBlock(block) {
+        return normalizePassageBlock(JSON.parse(JSON.stringify(block || emptyPassageBlock())));
+      }
+
+      function rememberLastEvalEdit(studentId, pk) {
+        ensureScore(studentId);
+        state.lastEvalEdit = {
+          studentId: studentId,
+          pk: pk,
+          block: cloneScoreBlock(state.scores[studentId][pk])
+        };
+        updateUndoLastEvalButton();
+      }
+
+      function clearLastEvalEdit() {
+        state.lastEvalEdit = null;
+        updateUndoLastEvalButton();
+      }
+
+      function undoLastEvalEdit() {
+        if (!state.lastEvalEdit) return;
+        ensureScore(state.lastEvalEdit.studentId);
+        state.scores[state.lastEvalEdit.studentId][state.lastEvalEdit.pk] = cloneScoreBlock(state.lastEvalEdit.block);
+        upgradeSerieTToCinqWhenBilanPlein(state.scores[state.lastEvalEdit.studentId][state.lastEvalEdit.pk]);
+        clearLastEvalEdit();
+        renderEval();
+        renderResults();
+        saveStorage();
+      }
+
+      function waveLetters() {
+        return ALL_WAVE_LETTERS.slice(0, state.waveCount);
+      }
+
+      function emptyWavesFull() {
+        var o = {};
+        for (var i = 0; i < ALL_WAVE_LETTERS.length; i++) {
+          o[ALL_WAVE_LETTERS[i]] = [];
+        }
+        return o;
+      }
+
+      /** Vide les vagues au-delà du nombre configuré (élèves concernés → non assignés). */
+      function pruneWavesBeyondCount() {
+        for (var i = state.waveCount; i < ALL_WAVE_LETTERS.length; i++) {
+          state.waves[ALL_WAVE_LETTERS[i]] = [];
+        }
+      }
+
+      function ensureActiveAndTargetWavesValid() {
+        var wl = waveLetters();
+        if (wl.indexOf(state.activeWave) < 0) state.activeWave = wl[0];
+        if (state.clickTargetWave !== '__unassigned__' && wl.indexOf(state.clickTargetWave) < 0) {
+          state.clickTargetWave = wl[0];
+        }
+      }
+
+      function renderWaveUiVisibility() {
+        for (var i = 0; i < ALL_WAVE_LETTERS.length; i++) {
+          var w = ALL_WAVE_LETTERS[i];
+          var visible = i < state.waveCount;
+          var prep = document.querySelector('.prep-target[data-prep-wave="' + w + '"]');
+          var pool = document.getElementById('pool-' + w);
+          var sel = document.getElementById('sel-' + w);
+          if (prep) prep.classList.toggle('hidden', !visible);
+          if (pool) pool.classList.toggle('hidden', !visible);
+          if (sel) sel.classList.toggle('hidden', !visible);
+        }
+      }
+
+      function syncWaveCountSelect() {
+        var el = document.getElementById('wave-count');
+        if (el) el.value = String(Math.max(MIN_WAVES, Math.min(MAX_WAVES, state.waveCount)));
+      }
 
       var timerInterval = null;
 
@@ -805,22 +1370,162 @@
       }
 
       function emptySerie() {
-        return { r: 0, t: 0, stack: [] };
+        return { r: 0, t: 0, stack: [], tirScoreChoisi: false, tirRtPartiel: false };
       }
 
-      /** Bloc passage : 5 séries (réussis / tentés) + portes course */
+      /** Anciennes données : r < t ⇒ saisie post-sirène partielle ; sinon bilan sur 5 tentatives. */
+      function normalizeSerieTirRtPartielFlag(si) {
+        if (si.tirRtPartiel === undefined) {
+          si.tirRtPartiel = (si.r | 0) < (si.t | 0);
+        } else {
+          si.tirRtPartiel = !!si.tirRtPartiel;
+        }
+      }
+
+      /** Bilan vague : tentatives = 5 ; on complète sauf séries marquées partielles (post-chrono). */
+      function upgradeSerieTToCinqWhenBilanPlein(block) {
+        if (!block || !block.series) return;
+        for (var i = 0; i < block.series.length; i++) {
+          var si = block.series[i];
+          if (!si || !si.tirScoreChoisi) continue;
+          if (si.tirRtPartiel) continue;
+          if ((si.t | 0) >= MAX_TIRS_SERIE) continue;
+          si.t = MAX_TIRS_SERIE;
+          if ((si.r | 0) > si.t) si.r = si.t;
+        }
+      }
+
+      /** Bloc passage : 5 séries (réussis / tentés) + portes course par série (indices 0–4). */
       function emptyPassageBlock() {
         return {
           series: [emptySerie(), emptySerie(), emptySerie(), emptySerie(), emptySerie()],
-          passages: 0
+          passagesSeries: [0, 0, 0, 0, 0],
+          passagesPorteChoisi: [false, false, false, false, false]
         };
       }
 
+      /** Fusionne le drapeau « portes validées » (reprise localStorage). */
+      function mergePassagesPorteChoisi(block, series) {
+        var out = [false, false, false, false, false];
+        if (block && Array.isArray(block.passagesPorteChoisi) && block.passagesPorteChoisi.length >= 5) {
+          for (var i = 0; i < 5; i++) out[i] = !!block.passagesPorteChoisi[i];
+          return out;
+        }
+        for (var j = 0; j < 5; j++) {
+          if (series[j] && series[j].tirScoreChoisi) out[j] = true;
+        }
+        return out;
+      }
+
+      function ensurePassagesPorteChoisiOnBlock(block) {
+        if (!block.passagesPorteChoisi || block.passagesPorteChoisi.length < 5) {
+          block.passagesPorteChoisi = [false, false, false, false, false];
+        }
+      }
+
+      function isSerieSessionComplete(block, idx) {
+        if (!block.series[idx] || !block.series[idx].tirScoreChoisi) return false;
+        ensurePassagesPorteChoisiOnBlock(block);
+        return !!block.passagesPorteChoisi[idx];
+      }
+
+      /** Indice de la série en cours : tant que tir ou portes manquent, on reste sur cette ligne. */
+      function getFirstIncompleteSerieIndex(block, nPairs) {
+        ensurePassagesPorteChoisiOnBlock(block);
+        for (var i = 0; i < nPairs; i++) {
+          if (!isSerieSessionComplete(block, i)) return i;
+        }
+        return nPairs;
+      }
+
+      /** Colonne évaluation verrouillée : hors fenêtre « chrono en cours » et hors saisie « après sirène ». */
+      function isEvalColumnGloballyLocked() {
+        if (isTimerRunning()) return false;
+        if (state.postWaveDiodesSummary) return false;
+        return true;
+      }
+
+      /** Série « active » (tir puis portes) ; `nPairs` si tout est complété. */
+      function getEditableSerieIndex(studentId, pk) {
+        ensureScore(studentId);
+        var nPairs = Math.min(EVAL_TIR_PORTE_PAIRS, 5);
+        var block = state.scores[studentId][pk];
+        if (state.postWaveDiodesSummary && state.postTimerEditableSerieByStudent) {
+          var capRaw = state.postTimerEditableSerieByStudent[studentId];
+          if (capRaw !== undefined && capRaw !== null) {
+            var cap = capRaw | 0;
+            if (cap >= nPairs) return nPairs;
+            if (isSerieSessionComplete(block, cap)) return nPairs;
+            return cap;
+          }
+        }
+        return getFirstIncompleteSerieIndex(block, nPairs);
+      }
+
+      function canEditTirForSerie(studentId, pk, serieIndex) {
+        if (isEvalColumnGloballyLocked()) return false;
+        ensureScore(studentId);
+        var nPairs = Math.min(EVAL_TIR_PORTE_PAIRS, 5);
+        var ed = getEditableSerieIndex(studentId, pk);
+        if (serieIndex !== ed || ed >= nPairs) return false;
+        var ser = state.scores[studentId][pk].series[serieIndex];
+        return !!(ser && !ser.tirScoreChoisi);
+      }
+
+      function canEditPortesForSerie(studentId, pk, serieIndex) {
+        if (isEvalColumnGloballyLocked()) return false;
+        ensureScore(studentId);
+        var nPairs = Math.min(EVAL_TIR_PORTE_PAIRS, 5);
+        var ed = getEditableSerieIndex(studentId, pk);
+        if (serieIndex !== ed || ed >= nPairs) return false;
+        var block = state.scores[studentId][pk];
+        var ser = block.series[serieIndex];
+        if (!ser || !ser.tirScoreChoisi) return false;
+        ensurePassagesPorteChoisiOnBlock(block);
+        return !block.passagesPorteChoisi[serieIndex];
+      }
+
+      function clampPorteVal(v) {
+        return Math.min(MAX_PORTES, Math.max(0, v | 0));
+      }
+
+      /** Somme des portes des 5 séries (score global course). */
+      function sumPassagesSeries(ps) {
+        if (!ps || ps.length < 5) return 0;
+        var s = 0;
+        for (var i = 0; i < 5; i++) s += clampPorteVal(ps[i]);
+        return s;
+      }
+
+      function passagesSeriesTooltip(ps) {
+        if (!ps || ps.length < 5) return '';
+        return (
+          'Portes par série — S1: ' +
+          clampPorteVal(ps[0]) +
+          ', S2: ' +
+          clampPorteVal(ps[1]) +
+          ', S3: ' +
+          clampPorteVal(ps[2]) +
+          ', S4: ' +
+          clampPorteVal(ps[3]) +
+          ', S5: ' +
+          clampPorteVal(ps[4])
+        );
+      }
+
       /**
-       * Normalise un bloc passage (format actuel ou ancien avec `tirs[]`).
+       * Normalise un bloc passage (format actuel, ancien `passages` unique, ou `tirs[]`).
        */
       function normalizePassageBlock(block) {
-        var passages = block && block.passages != null ? Math.min(MAX_PORTES, Math.max(0, block.passages | 0)) : 0;
+        var passagesSeries = [0, 0, 0, 0, 0];
+        if (block && Array.isArray(block.passagesSeries) && block.passagesSeries.length >= 5) {
+          for (var pi = 0; pi < 5; pi++) {
+            passagesSeries[pi] = clampPorteVal(block.passagesSeries[pi]);
+          }
+        } else if (block && block.passages != null) {
+          var legacyP = clampPorteVal(block.passages);
+          for (var pj = 0; pj < 5; pj++) passagesSeries[pj] = legacyP;
+        }
         if (block && block.series && block.series.length === 5) {
           for (var i = 0; i < 5; i++) {
             var si = block.series[i];
@@ -828,16 +1533,38 @@
             si.t = Math.min(MAX_TIRS_SERIE, Math.max(0, si.t | 0));
             si.r = Math.min(MAX_TIRS_SERIE, Math.max(0, si.r | 0));
             if (si.r > si.t) si.r = si.t;
+            normalizeSerieTirRtPartielFlag(si);
+            if (si.tirScoreChoisi === undefined) {
+              si.tirScoreChoisi = (si.r | 0) > 0 || (si.t | 0) > 0 || (si.stack && si.stack.length > 0);
+            } else {
+              si.tirScoreChoisi = !!si.tirScoreChoisi;
+            }
           }
-          return { series: block.series, passages: passages };
+          return {
+            series: block.series,
+            passagesSeries: passagesSeries,
+            passagesPorteChoisi: mergePassagesPorteChoisi(block, block.series)
+          };
         }
         var leg = block && block.tirs ? block.tirs : [0, 0, 0, 0, 0];
         var series = [];
         for (var j = 0; j < 5; j++) {
           var v = leg[j] | 0;
-          series.push({ r: Math.min(5, v), t: v > 0 ? 5 : 0, stack: [] });
+          var r0 = Math.min(5, v);
+          var t0 = v > 0 ? 5 : 0;
+          series.push({
+            r: r0,
+            t: t0,
+            stack: [],
+            tirScoreChoisi: r0 > 0 || t0 > 0,
+            tirRtPartiel: r0 < t0
+          });
         }
-        return { series: series, passages: passages };
+        return {
+          series: series,
+          passagesSeries: passagesSeries,
+          passagesPorteChoisi: mergePassagesPorteChoisi(block, series)
+        };
       }
 
       function sumReussis(series) {
@@ -852,15 +1579,16 @@
         return s;
       }
 
-      /** Score classement : réussites + portes (les tentés sont dans l’affichage détaillé) */
+      /** Score classement : réussites + somme des portes par série */
       function globalScoreBlock(block) {
-        return sumReussis(block.series) + (block.passages | 0);
+        return sumReussis(block.series) + sumPassagesSeries(block.passagesSeries);
       }
 
       /** Remet à zéro tirs (5 séries) + portes pour tous les élèves d’une vague, passage p1 ou p2 */
       function resetWavePassageScores(wave, pk) {
         var ids = state.waves[wave];
         if (!ids) return;
+        clearLastEvalEdit();
         for (var i = 0; i < ids.length; i++) {
           ensureScore(ids[i]);
           state.scores[ids[i]][pk] = emptyPassageBlock();
@@ -879,6 +1607,8 @@
         var o = state.scores[studentId];
         o.p1 = o.p1 ? normalizePassageBlock(o.p1) : emptyPassageBlock();
         o.p2 = o.p2 ? normalizePassageBlock(o.p2) : emptyPassageBlock();
+        upgradeSerieTToCinqWhenBilanPlein(o.p1);
+        upgradeSerieTToCinqWhenBilanPlein(o.p2);
       }
 
       function getPassageKey() {
@@ -888,7 +1618,16 @@
       /** Sauvegarde automatique */
       function saveStorage() {
         try {
+          var modeDel = state.prepBulkDeleteMode;
+          var marksDel = state.prepStudentIdsMarkedForDelete;
+          var lastEvalEdit = state.lastEvalEdit;
+          state.prepBulkDeleteMode = false;
+          state.prepStudentIdsMarkedForDelete = {};
+          state.lastEvalEdit = null;
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          state.prepBulkDeleteMode = modeDel;
+          state.prepStudentIdsMarkedForDelete = marksDel;
+          state.lastEvalEdit = lastEvalEdit;
           var el = document.getElementById('save-status');
           if (el) el.textContent = 'Dernière sauvegarde : ' + new Date().toLocaleTimeString('fr-FR');
         } catch (e) {
@@ -903,22 +1642,34 @@
           var o = JSON.parse(raw);
           if (o && o.students) {
             state.students = o.students;
-            state.waves = Object.assign({ A: [], B: [], C: [], D: [], E: [], F: [] }, o.waves || {});
+            state.waves = Object.assign(emptyWavesFull(), o.waves || {});
+            var wc = o.waveCount != null ? parseInt(o.waveCount, 10) : 6;
+            if (isNaN(wc)) wc = 6;
+            state.waveCount = Math.max(MIN_WAVES, Math.min(MAX_WAVES, wc));
+            pruneWavesBeyondCount();
             state.activeWave = o.activeWave || 'A';
-            if (WAVE_LETTERS.indexOf(state.activeWave) < 0) state.activeWave = 'A';
+            if (ALL_WAVE_LETTERS.indexOf(state.activeWave) < 0) state.activeWave = 'A';
             state.passage = o.passage === 2 ? 2 : 1;
             state.scores = o.scores || {};
             state.timerEndAt = o.timerEndAt != null ? o.timerEndAt : null;
             state.timerPausedLeftMs = o.timerPausedLeftMs != null ? o.timerPausedLeftMs : null;
             state.clickTargetWave = o.clickTargetWave || 'A';
-            if (state.clickTargetWave !== '__unassigned__' && WAVE_LETTERS.indexOf(state.clickTargetWave) < 0) {
+            if (state.clickTargetWave !== '__unassigned__' && ALL_WAVE_LETTERS.indexOf(state.clickTargetWave) < 0) {
               state.clickTargetWave = 'A';
             }
+            ensureActiveAndTargetWavesValid();
             state.postWaveDiodesSummary = !!o.postWaveDiodesSummary;
             /* Anciennes sauvegardes : chrono déjà terminé → afficher les diodes */
             if (state.timerPausedLeftMs === 0 && state.timerEndAt == null && o.postWaveDiodesSummary === undefined) {
               state.postWaveDiodesSummary = true;
             }
+            state.postTimerEditableSerieByStudent =
+              o.postTimerEditableSerieByStudent && typeof o.postTimerEditableSerieByStudent === 'object'
+                ? o.postTimerEditableSerieByStudent
+                : null;
+            state.prepBulkDeleteMode = false;
+            state.prepStudentIdsMarkedForDelete = {};
+            state.lastEvalEdit = null;
           }
         } catch (e) {
           console.warn('Reprise impossible', e);
@@ -951,9 +1702,9 @@
 
       /**
        * Import depuis la zone texte : une ligne = un élève.
-       * — Prénom seul (un mot ou plusieurs sans ; ni ,) : nom = « — », prénom = ligne entière.
-       * — Nom;Prénom ou Nom,Prénom (comme le CSV).
-       * — « Nom Prénom » : premier mot = nom, reste = prénom (espaces).
+       * Prénom seul (sans ; ni ,) : nom vide, prénom = ligne entière.
+       * Nom;Prénom ou Nom,Prénom (comme le CSV).
+       * « Nom Prénom » : premier mot = nom, reste = prénom (espaces).
        */
       function importManualText(text) {
         var lines = String(text || '')
@@ -984,9 +1735,36 @@
             });
             continue;
           }
-          students.push({ id: uid(), nom: '—', prenom: line });
+          students.push({ id: uid(), nom: '', prenom: line });
         }
         return students;
+      }
+
+      /** Affichage nom + prénom (sans tiret réservé aux anciennes données « prénom seul »). */
+      function displayNomPrenom(stu) {
+        var n = (stu.nom || '').trim();
+        var p = (stu.prenom || '').trim();
+        if (n === '—') n = '';
+        if (p === '—') p = '';
+        if (n && p) return n + ' ' + p;
+        return p || n || '?';
+      }
+
+      /** Prénom puis nom pour l’évaluation (pas de tiret devant le prénom). */
+      function displayPrenomNom(stu) {
+        var n = (stu.nom || '').trim();
+        var p = (stu.prenom || '').trim();
+        if (n === '—') n = '';
+        if (p === '—') p = '';
+        if (p && n) return p + ' ' + n;
+        return p || n || '?';
+      }
+
+      /** Colonne « Nom » et export : anciennes fiches avec « — » pour prénom seul. */
+      function stripLegacyDashNom(n) {
+        if (n == null) return '';
+        var t = String(n).trim();
+        return t === '—' ? '' : String(n);
       }
 
       /** Met à jour le style des boutons Passage 1 / Passage 2 (actif = allumé). */
@@ -1039,18 +1817,48 @@
 
       function onTimerFinished() {
         state.postWaveDiodesSummary = true;
+        var pkSnap = getPassageKey();
+        var nPairsSnap = Math.min(EVAL_TIR_PORTE_PAIRS, 5);
+        var idsSnap = state.waves[state.activeWave];
+        state.postTimerEditableSerieByStudent = {};
+        if (idsSnap && idsSnap.length) {
+          for (var zi = 0; zi < idsSnap.length; zi++) {
+            var sidZ = idsSnap[zi];
+            ensureScore(sidZ);
+            state.postTimerEditableSerieByStudent[sidZ] = getFirstIncompleteSerieIndex(
+              state.scores[sidZ][pkSnap],
+              nPairsSnap
+            );
+          }
+        }
         var disp = document.getElementById('timer-display');
         if (disp) disp.classList.add('flash-end');
         setTimeout(function () { if (disp) disp.classList.remove('flash-end'); }, 2000);
         playEndBeep();
-        document.getElementById('timer-status').textContent = 'Temps écoulé — diodes affichées à côté des prénoms.';
+        document.getElementById('timer-status').textContent =
+          'Temps écoulé — saisie figée sauf la série en cours : d’abord les tirs, puis les portes.';
         renderEval();
+        updateStartWaveButtonState();
         saveStorage();
+      }
+
+      function updateStartWaveButtonState() {
+        var btn = document.getElementById('btn-start-wave');
+        if (!btn) return;
+        var running = isTimerRunning();
+        btn.disabled = running;
+        btn.setAttribute('aria-disabled', running ? 'true' : 'false');
+        if (running) {
+          btn.title = 'Chrono en cours — impossible de relancer tant que la vague n’est pas terminée.';
+        } else {
+          btn.removeAttribute('title');
+        }
       }
 
       function tickTimer() {
         var ms = remainingMs();
         document.getElementById('timer-display').textContent = formatMs(ms);
+        updateStartWaveButtonState();
         if (state.timerEndAt != null && ms <= 0) {
           clearInterval(timerInterval);
           timerInterval = null;
@@ -1071,12 +1879,14 @@
         state.timerEndAt = Date.now() + DURATION_MS;
         state.timerPausedLeftMs = null;
         state.postWaveDiodesSummary = false;
+        state.postTimerEditableSerieByStudent = null;
         document.getElementById('timer-status').textContent = 'Vague ' + state.activeWave + ' en cours…';
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(tickTimer, 200);
         tickTimer();
         renderEval();
         highlightActiveWaveTabs();
+        updateStartWaveButtonState();
         saveStorage();
       }
 
@@ -1086,17 +1896,82 @@
         state.timerEndAt = null;
         state.timerPausedLeftMs = DURATION_MS;
         state.postWaveDiodesSummary = false;
+        state.postTimerEditableSerieByStudent = null;
         document.getElementById('timer-display').textContent = '3:00';
         document.getElementById('timer-status').textContent = 'Chrono réinitialisé (prêt).';
         renderEval();
+        updateStartWaveButtonState();
         saveStorage();
       }
 
       // --- Rendu préparation ----------------------------------------------------
 
+      function countPrepMarkedForDelete() {
+        var n = 0;
+        for (var k in state.prepStudentIdsMarkedForDelete) {
+          if (state.prepStudentIdsMarkedForDelete[k]) n++;
+        }
+        return n;
+      }
+
+      function updatePrepBulkDeleteBar() {
+        var bar = document.getElementById('prep-bulk-delete-bar');
+        var countEl = document.getElementById('prep-bulk-delete-count');
+        var confirmBtn = document.getElementById('prep-bulk-delete-confirm');
+        var bulkBtn = document.getElementById('btn-bulk-delete-students');
+        if (!bar) return;
+        if (!state.prepBulkDeleteMode) {
+          bar.classList.add('hidden');
+          if (bulkBtn) bulkBtn.setAttribute('aria-pressed', 'false');
+          return;
+        }
+        bar.classList.remove('hidden');
+        if (bulkBtn) bulkBtn.setAttribute('aria-pressed', 'true');
+        var n = countPrepMarkedForDelete();
+        if (countEl) countEl.textContent = String(n);
+        if (confirmBtn) confirmBtn.disabled = n === 0;
+      }
+
+      function exitPrepBulkDeleteMode() {
+        var hadMode = state.prepBulkDeleteMode;
+        var hadMarks = countPrepMarkedForDelete() > 0;
+        state.prepBulkDeleteMode = false;
+        state.prepStudentIdsMarkedForDelete = {};
+        updatePrepBulkDeleteBar();
+        if (hadMode || hadMarks) renderAllPools();
+      }
+
+      function removeStudentById(studentId) {
+        state.students = state.students.filter(function (s) { return s.id !== studentId; });
+        removeFromWaves(studentId);
+        delete state.scores[studentId];
+        delete state.prepStudentIdsMarkedForDelete[studentId];
+      }
+
+      function applyPrepBulkDelete() {
+        var ids = [];
+        for (var id in state.prepStudentIdsMarkedForDelete) {
+          if (state.prepStudentIdsMarkedForDelete[id]) ids.push(id);
+        }
+        if (ids.length === 0) return;
+        if (!confirm('Supprimer définitivement ' + ids.length + ' élève(s) sélectionné(e)s ?')) return;
+        for (var i = 0; i < ids.length; i++) {
+          removeStudentById(ids[i]);
+        }
+        state.prepBulkDeleteMode = false;
+        state.prepStudentIdsMarkedForDelete = {};
+        updatePrepBulkDeleteBar();
+        renderAllPools();
+        renderEval();
+        renderResults();
+        saveStorage();
+      }
+
       function renderAllPools() {
+        syncWaveCountSelect();
+        renderWaveUiVisibility();
         var assigned = {};
-        WAVE_LETTERS.forEach(function (w) {
+        waveLetters().forEach(function (w) {
           state.waves[w].forEach(function (id) { assigned[id] = w; });
         });
         var unassigned = state.students.filter(function (s) { return !assigned[s.id]; });
@@ -1110,33 +1985,17 @@
           }
         }
 
-        document.getElementById('count-all').textContent = String(state.students.length);
-        renderRosterTable(assigned);
-
-        WAVE_LETTERS.forEach(function (w) {
+        waveLetters().forEach(function (w) {
           var el = document.getElementById('count-' + w);
           if (el) el.textContent = String(state.waves[w].length);
         });
         document.getElementById('count-U').textContent = String(unassigned.length);
 
-        WAVE_LETTERS.forEach(function (w) {
+        waveLetters().forEach(function (w) {
           renderChips('chips-' + w, state.waves[w].map(studentById).filter(Boolean), w);
         });
         renderChips('chips-U', unassigned, '__unassigned__');
-      }
-
-      /** Affiche la liste complète sous forme de tableau (sans doublon avec les vagues). */
-      function renderRosterTable(assignedMap) {
-        var tbody = document.getElementById('roster-body');
-        if (!tbody) return;
-        tbody.innerHTML = '';
-        for (var i = 0; i < state.students.length; i++) {
-          var s = state.students[i];
-          var w = assignedMap[s.id] || '—';
-          var tr = document.createElement('tr');
-          tr.innerHTML = '<td>' + escapeHtml(s.nom) + '</td><td>' + escapeHtml(s.prenom) + '</td><td><strong>' + w + '</strong></td>';
-          tbody.appendChild(tr);
-        }
+        updatePrepBulkDeleteBar();
       }
 
       /**
@@ -1145,11 +2004,18 @@
       function makeChip(stu, sourceWave) {
         var d = document.createElement('div');
         d.className = 'chip';
-        d.textContent = stu.nom + ' ' + stu.prenom;
-        d.draggable = true;
+        if (state.prepBulkDeleteMode && state.prepStudentIdsMarkedForDelete[stu.id]) {
+          d.classList.add('chip--marked-delete');
+        }
+        d.textContent = displayNomPrenom(stu);
+        d.draggable = !state.prepBulkDeleteMode;
         d.dataset.studentId = stu.id;
         d.dataset.sourceWave = sourceWave;
         d.addEventListener('dragstart', function (e) {
+          if (state.prepBulkDeleteMode) {
+            e.preventDefault();
+            return;
+          }
           d.classList.add('dragging');
           e.dataTransfer.setData('text/plain', stu.id);
           e.dataTransfer.effectAllowed = 'move';
@@ -1159,7 +2025,18 @@
         });
         // Clic : envoi vers la vague cible (boutons A / B / C / Non assignés)
         d.addEventListener('click', function () {
-          if (sourceWave === '__unassigned__' || WAVE_LETTERS.indexOf(sourceWave) >= 0) {
+          if (state.prepBulkDeleteMode) {
+            if (state.prepStudentIdsMarkedForDelete[stu.id]) {
+              delete state.prepStudentIdsMarkedForDelete[stu.id];
+            } else {
+              state.prepStudentIdsMarkedForDelete[stu.id] = true;
+            }
+            updatePrepBulkDeleteBar();
+            renderAllPools();
+            return;
+          }
+          var active = waveLetters();
+          if (sourceWave === '__unassigned__' || active.indexOf(sourceWave) >= 0) {
             var tgt = state.clickTargetWave;
             if (tgt === '__unassigned__') moveStudentToWave(stu.id, '__unassigned__');
             else moveStudentToWave(stu.id, /** @type {WaveId} */ (tgt));
@@ -1170,7 +2047,7 @@
 
       /** Retire l’élève de toutes les vagues */
       function removeFromWaves(studentId) {
-        WAVE_LETTERS.forEach(function (w) {
+        ALL_WAVE_LETTERS.forEach(function (w) {
           state.waves[w] = state.waves[w].filter(function (id) { return id !== studentId; });
         });
       }
@@ -1181,6 +2058,7 @@
        * @param {WaveId|'__unassigned__'} target
        */
       function moveStudentToWave(studentId, target) {
+        if (state.prepBulkDeleteMode) return;
         removeFromWaves(studentId);
         if (target === '__unassigned__') {
           /* rien : déjà retiré */
@@ -1209,6 +2087,7 @@
             pool.addEventListener('drop', function (e) {
               e.preventDefault();
               pool.classList.remove('drag-over');
+              if (state.prepBulkDeleteMode) return;
               var sid = e.dataTransfer.getData('text/plain');
               if (!sid) return;
               moveStudentToWave(sid, wave === '__unassigned__' ? '__unassigned__' : /** @type {WaveId} */ (wave));
@@ -1219,17 +2098,8 @@
 
       // --- Rendu évaluation -----------------------------------------------------
 
-      /**
-       * Verrouillage des saisies : déverrouillé uniquement pendant les 3 minutes
-       * après « Démarrer la vague ». Avant le départ ou après 0:00, tout est bloqué.
-       */
-      function inputsLockedCorrected() {
-        if (state.timerEndAt != null && Date.now() < state.timerEndAt) return false;
-        return true;
-      }
-
       function highlightActiveWaveTabs() {
-        WAVE_LETTERS.forEach(function (w) {
+        ALL_WAVE_LETTERS.forEach(function (w) {
           var b = document.getElementById('sel-' + w);
           if (!b) return;
           b.classList.remove('active', 'wave-active-prep');
@@ -1261,11 +2131,12 @@
         if (!ids || ids.length === 0) {
           empty.classList.remove('hidden');
           cols.innerHTML = '';
+          updateUndoLastEvalButton();
           return;
         }
         empty.classList.add('hidden');
 
-        var locked = inputsLockedCorrected();
+        var locked = isEvalColumnGloballyLocked();
         cols.innerHTML = '';
 
         for (var i = 0; i < ids.length; i++) {
@@ -1274,6 +2145,7 @@
           ensureScore(stu.id);
           cols.appendChild(buildStudentColumn(stu, locked));
         }
+        updateUndoLastEvalButton();
         highlightActiveWaveTabs();
       }
 
@@ -1292,7 +2164,7 @@
         line.className = 'student-name-line';
         var title = document.createElement('span');
         title.className = 'name';
-        title.textContent = stu.prenom + ' ' + stu.nom;
+        title.textContent = displayPrenomNom(stu);
         line.appendChild(title);
         if (state.postWaveDiodesSummary) {
           var tr = sumReussis(sc.series);
@@ -1310,121 +2182,214 @@
         head.appendChild(line);
         col.appendChild(head);
 
-        var zoneTirs = document.createElement('div');
-        zoneTirs.className = 'student-col-tirs';
-        for (var t = 0; t < 5; t++) {
-          zoneTirs.appendChild(buildSerieBlock(stu.id, t, sc.series[t]));
+        var alt = document.createElement('div');
+        alt.className = 'student-col-alternating';
+        var nPairs = Math.min(EVAL_TIR_PORTE_PAIRS, 5);
+        var edSerie = getEditableSerieIndex(stu.id, pk);
+        var postTimer = !!state.postWaveDiodesSummary;
+        if (edSerie >= nPairs) {
+          var done = document.createElement('div');
+          done.className = 'tir-readonly-rt';
+          done.textContent = 'Series terminees';
+          done.title = 'Toutes les series de cet eleve sont completees.';
+          alt.appendChild(done);
+          col.appendChild(alt);
+          return col;
         }
-        var totR = sumReussis(sc.series);
-        var totT = sumTentes(sc.series);
-        var totEl = document.createElement('div');
-        totEl.className = 'serie-total';
-        totEl.innerHTML =
-          '<span class="serie-total-prefix">Total tirs</span>' +
-          '<div class="serie-total-nums"><span class="big">' + totR + '</span><span class="sep"> / </span><span class="big">' + totT + '</span></div>';
-        zoneTirs.appendChild(totEl);
-        col.appendChild(zoneTirs);
+        for (var t = edSerie; t <= edSerie; t++) {
+          var rowInactive = locked;
+          var ser = sc.series[t];
+          var tirSubLocked = rowInactive || !!ser.tirScoreChoisi;
+          var porteSubLocked = rowInactive || !ser.tirScoreChoisi;
+          var pair = document.createElement('div');
+          pair.className =
+            'tir-porte-paire' +
+            (rowInactive ? ' tir-porte-paire--locked' : ' tir-porte-paire--current');
+          var tirWrap = document.createElement('div');
+          tirWrap.className =
+            'tir-sub' +
+            (tirSubLocked ? ' tir-sub--locked' : ' tir-sub--expanded');
+          var lab = document.createElement('div');
+          lab.className = 'tir-nums-row-label';
+          lab.textContent = 'Tir réussi — série ' + (t + 1);
+          tirWrap.appendChild(lab);
+          var curR = ser.r | 0;
+          var curT = ser.t | 0;
+          var choisi = !!ser.tirScoreChoisi;
 
-        var zoneCourse = document.createElement('div');
-        zoneCourse.className = 'student-col-course';
-        zoneCourse.appendChild(buildCourseBlock(stu.id, sc.passages));
-        col.appendChild(zoneCourse);
+          if (!tirSubLocked && isTimerRunning()) {
+            var row = document.createElement('div');
+            row.className = 'tir-pick-row';
+            for (var k = 0; k <= 5; k++) {
+              (function (serieIdx, kk) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                var tier = kk <= 1 ? ' tir-pick-btn--tier-01' : kk <= 3 ? ' tir-pick-btn--tier-23' : ' tir-pick-btn--tier-45';
+                var showActive = choisi && curR === kk;
+                btn.className = 'tir-pick-btn' + (showActive ? ' tir-pick-btn--active' + tier : '');
+                btn.textContent = String(kk);
+                if (kk === 0) btn.title = 'Série ' + (serieIdx + 1) + ' : aucun tir réussi';
+                else if (kk === 1) btn.title = 'Série ' + (serieIdx + 1) + ' : 1 tir réussi';
+                else btn.title = 'Série ' + (serieIdx + 1) + ' : ' + kk + ' tirs réussis';
+                btn.addEventListener('click', function () {
+                  setSerieFromSuccessCount(stu.id, serieIdx, kk);
+                });
+                row.appendChild(btn);
+              })(t, k);
+            }
+            tirWrap.appendChild(row);
+          } else if (!tirSubLocked && postTimer) {
+            tirWrap.appendChild(buildPostTimerTirControls(stu.id, t, ser));
+          } else {
+            var ro = document.createElement('div');
+            ro.className = 'tir-readonly-rt';
+            if (choisi || curR > 0 || curT > 0) {
+              ro.textContent = curR + ' / ' + curT;
+              ro.title = 'Réussis / tentés (figé)';
+            } else {
+              ro.textContent = '—';
+              ro.classList.add('tir-readonly-rt--empty');
+            }
+            tirWrap.appendChild(ro);
+          }
+          pair.appendChild(tirWrap);
+          var zc = document.createElement('div');
+          zc.className =
+            'student-col-course course-sub' +
+            (porteSubLocked ? ' course-sub--locked' : ' course-sub--expanded');
+          zc.appendChild(
+            buildCourseBlock(stu.id, t, porteSubLocked)
+          );
+          pair.appendChild(zc);
+          alt.appendChild(pair);
+        }
+        col.appendChild(alt);
 
         return col;
       }
 
-      function buildSerieBlock(studentId, serieIndex, serie) {
+      /**
+       * Fixe le nombre de tirs réussis pour une série (0–5) pendant la vague.
+       * Chaque série compte toujours 5 tirs : affichage 0/5 … 5/5 (bilan rapide).
+       */
+      function setSerieFromSuccessCount(studentId, serieIndex, successCount) {
+        if (isEvalColumnGloballyLocked()) return;
+        if (state.postWaveDiodesSummary) return;
+        var pk = getPassageKey();
+        if (!canEditTirForSerie(studentId, pk, serieIndex)) return;
+        ensureScore(studentId);
+        rememberLastEvalEdit(studentId, pk);
+        var s = state.scores[studentId][pk].series[serieIndex];
+        var nk = Math.max(0, Math.min(MAX_TIRS_SERIE, successCount | 0));
+        s.r = nk;
+        s.t = MAX_TIRS_SERIE;
+        s.stack = [];
+        s.tirRtPartiel = false;
+        s.tirScoreChoisi = true;
+        saveStorage();
+        renderEval();
+      }
+
+      /** Après la sirène : réussis / tentés avec série incomplète (ex. 1 / 3). */
+      function setSeriePartialRT(studentId, serieIndex, r, t, markChosen) {
+        if (isEvalColumnGloballyLocked()) return;
+        if (!state.postWaveDiodesSummary) return;
+        var pk = getPassageKey();
+        if (!canEditTirForSerie(studentId, pk, serieIndex)) return;
+        ensureScore(studentId);
+        rememberLastEvalEdit(studentId, pk);
+        var s = state.scores[studentId][pk].series[serieIndex];
+        var tt = Math.max(0, Math.min(MAX_TIRS_SERIE, t | 0));
+        var rr = Math.max(0, Math.min(MAX_TIRS_SERIE, r | 0));
+        if (rr > tt) rr = tt;
+        s.r = rr;
+        s.t = tt;
+        s.stack = [];
+        s.tirRtPartiel = tt < MAX_TIRS_SERIE;
+        s.tirScoreChoisi = !!markChosen;
+        saveStorage();
+        renderEval();
+      }
+
+      function buildPostTimerTirControls(studentId, serieIdx, ser) {
         var wrap = document.createElement('div');
-        wrap.className = 'serie-block';
-        var line = document.createElement('div');
-        line.className = 'serie-line' + (serie.t >= MAX_TIRS_SERIE ? ' serie-line-complete' : '');
-        line.innerHTML =
-          '<span class="serie-line-title">Série ' + (serieIndex + 1) + '</span>' +
-          '<div class="serie-line-scores"><span class="big">' + serie.r + '</span><span class="sep"> / </span><span class="big">' + serie.t + '</span></div>';
-        wrap.appendChild(line);
+        wrap.className = 'tir-posttimer-wrap';
+        var hint = document.createElement('div');
+        hint.className = 'tir-nums-row-label';
+        hint.textContent = 'Après chronomètre — tentés puis réussis';
+        hint.style.marginTop = '4px';
+        wrap.appendChild(hint);
 
-        var actions = document.createElement('div');
-        actions.className = 'serie-actions';
+        var lt = document.createElement('div');
+        lt.className = 'tir-pick-row-label-aux';
+        lt.textContent = 'Tirs tentés';
+        wrap.appendChild(lt);
+        var rowT = document.createElement('div');
+        rowT.className = 'tir-pick-row tir-pick-row--posttimer';
+        for (var tt = 0; tt <= MAX_TIRS_SERIE; tt++) {
+          (function (tVal) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'tir-pick-btn';
+            if ((ser.t | 0) === tVal) {
+              btn.classList.add('tir-pick-btn--active', 'tir-pick-btn--tier-23');
+            }
+            btn.textContent = String(tVal);
+            btn.title = tVal === 0 ? 'Aucun tir tenté sur cette série' : tVal + ' tirs tentés';
+            btn.addEventListener('click', function () {
+              var curR = state.scores[studentId][getPassageKey()].series[serieIdx].r | 0;
+              setSeriePartialRT(studentId, serieIdx, Math.min(curR, tVal), tVal, false);
+            });
+            rowT.appendChild(btn);
+          })(tt);
+        }
+        wrap.appendChild(rowT);
 
-        var bT = document.createElement('button');
-        bT.type = 'button';
-        bT.className = 'serie-btn';
-        bT.textContent = '+1 tir tenté';
-        bT.addEventListener('click', function () {
-          addSerieTente(studentId, serieIndex);
-        });
-        actions.appendChild(bT);
-
-        var bR = document.createElement('button');
-        bR.type = 'button';
-        bR.className = 'serie-btn serie-btn-reussi';
-        bR.textContent = '+1 tir réussi';
-        bR.addEventListener('click', function () {
-          addSerieReussi(studentId, serieIndex);
-        });
-        actions.appendChild(bR);
-
-        var bU = document.createElement('button');
-        bU.type = 'button';
-        bU.className = 'serie-btn serie-btn-undo';
-        bU.textContent = 'Annuler dernier clic';
-        bU.addEventListener('click', function () {
-          annulerSerie(studentId, serieIndex);
-        });
-        actions.appendChild(bU);
-
-        wrap.appendChild(actions);
+        var lr = document.createElement('div');
+        lr.className = 'tir-pick-row-label-aux';
+        lr.textContent = 'Tirs réussis (≤ tentés)';
+        wrap.appendChild(lr);
+        var rowR = document.createElement('div');
+        rowR.className = 'tir-pick-row tir-pick-row--posttimer';
+        var maxR = Math.max(0, ser.t | 0);
+        for (var rr = 0; rr <= maxR; rr++) {
+          (function (rVal) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'tir-pick-btn';
+            if ((ser.r | 0) === rVal) {
+              var tier = rVal <= 1 ? ' tir-pick-btn--tier-01' : rVal <= 3 ? ' tir-pick-btn--tier-23' : ' tir-pick-btn--tier-45';
+              btn.className = 'tir-pick-btn tir-pick-btn--active' + tier;
+            }
+            btn.textContent = String(rVal);
+            btn.title = rVal + ' réussi' + (rVal > 1 ? 's' : '');
+            btn.addEventListener('click', function () {
+              var blk = state.scores[studentId][getPassageKey()].series[serieIdx];
+              var tKeep = blk.t | 0;
+              var newT = rVal === 0 ? tKeep : Math.max(tKeep, rVal, 1);
+              setSeriePartialRT(studentId, serieIdx, rVal, newT, true);
+            });
+            rowR.appendChild(btn);
+          })(rr);
+        }
+        wrap.appendChild(rowR);
         return wrap;
       }
 
-      function addSerieTente(studentId, serieIndex) {
-        if (inputsLockedCorrected()) return;
+      function buildCourseBlock(studentId, serieIndex, porteLocked) {
         ensureScore(studentId);
-        var pk = getPassageKey();
-        var s = state.scores[studentId][pk].series[serieIndex];
-        if (s.t >= MAX_TIRS_SERIE) return;
-        s.t += 1;
-        s.stack.push('T');
-        saveStorage();
-        renderEval();
-      }
+        var block = state.scores[studentId][getPassageKey()];
+        ensurePassagesPorteChoisiOnBlock(block);
+        var ps = block.passagesSeries;
+        var passages = clampPorteVal(ps[serieIndex]);
+        var ppc = block.passagesPorteChoisi[serieIndex];
 
-      function addSerieReussi(studentId, serieIndex) {
-        if (inputsLockedCorrected()) return;
-        ensureScore(studentId);
-        var pk = getPassageKey();
-        var s = state.scores[studentId][pk].series[serieIndex];
-        if (s.t >= MAX_TIRS_SERIE) return;
-        s.t += 1;
-        s.r += 1;
-        s.stack.push('R');
-        saveStorage();
-        renderEval();
-      }
-
-      function annulerSerie(studentId, serieIndex) {
-        if (inputsLockedCorrected()) return;
-        ensureScore(studentId);
-        var pk = getPassageKey();
-        var s = state.scores[studentId][pk].series[serieIndex];
-        if (!s.stack || !s.stack.length) return;
-        var last = s.stack.pop();
-        if (last === 'R') {
-          s.t -= 1;
-          s.r -= 1;
-        } else if (last === 'T') {
-          s.t -= 1;
-        }
-        saveStorage();
-        renderEval();
-      }
-
-      function buildCourseBlock(studentId, passages) {
         var box = document.createElement('div');
         box.className = 'course-box';
+        if (ppc) box.classList.add('course-box--compact');
         var lab = document.createElement('div');
-        lab.className = 'portes-title';
-        lab.textContent = 'Portes';
+        lab.className = 'portes-title portes-title--compact';
+        lab.textContent = 'Portes (S' + (serieIndex + 1) + ')';
         box.appendChild(lab);
 
         var disp = document.createElement('div');
@@ -1434,72 +2399,53 @@
         disp.textContent = String(passages);
         box.appendChild(disp);
 
-        var stepRow = document.createElement('div');
-        stepRow.className = 'pass-step-row';
-        var steps = [
-          { label: '−8', delta: -8 },
-          { label: '−1', delta: -1 },
-          { label: '+1', delta: 1 },
-          { label: '+8', delta: 8 }
-        ];
-        for (var si = 0; si < steps.length; si++) {
-          (function (d) {
+        if (!ppc) {
+          var stepRow = document.createElement('div');
+          stepRow.className = 'porte-pick-row';
+          function addPorteBtn(val, fullWidth) {
             var sb = document.createElement('button');
             sb.type = 'button';
-            sb.textContent = steps[d].label;
-            sb.addEventListener('click', function () {
-              ensureScore(studentId);
-              var pk = getPassageKey();
-              var cur = state.scores[studentId][pk].passages;
-              setPassages(studentId, cur + steps[d].delta);
-            });
+            sb.className = 'porte-pick-btn';
+            if (fullWidth) sb.classList.add('porte-pick-wide');
+            sb.textContent = String(val);
+            sb.title = val === 0 ? 'Aucune porte' : val + ' porte' + (val > 1 ? 's' : '');
+            if (!porteLocked) {
+              sb.addEventListener('click', function () {
+                setPassagesForSerie(studentId, serieIndex, val, true);
+              });
+            } else {
+              sb.disabled = true;
+            }
             stepRow.appendChild(sb);
-          })(si);
+          }
+          addPorteBtn(0, false);
+          for (var p = 1; p < MAX_PORTES_PICK; p++) {
+            addPorteBtn(p, false);
+          }
+          addPorteBtn(MAX_PORTES_PICK, true);
+          box.appendChild(stepRow);
         }
-        box.appendChild(stepRow);
-
-        var numIn = document.createElement('input');
-        numIn.type = 'number';
-        numIn.className = 'pass-num-input';
-        numIn.min = '0';
-        numIn.max = String(MAX_PORTES);
-        numIn.value = String(passages);
-        numIn.setAttribute('inputmode', 'numeric');
-        numIn.addEventListener('change', function () {
-          var n = parseInt(numIn.value, 10);
-          if (isNaN(n)) n = passages;
-          setPassages(studentId, n);
-        });
-        numIn.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter') numIn.blur();
-        });
-        box.appendChild(numIn);
-
-        var quick8 = document.createElement('div');
-        quick8.className = 'pass-quick-8';
-        var marks = [0, 8, 16, 24, 32];
-        for (var qi = 0; qi < marks.length; qi++) {
-          (function (pp) {
-            var qb = document.createElement('button');
-            qb.type = 'button';
-            qb.textContent = String(pp);
-            if (pp === passages) qb.style.outline = '3px solid var(--accent)';
-            qb.addEventListener('click', function () {
-              setPassages(studentId, pp);
-            });
-            quick8.appendChild(qb);
-          })(marks[qi]);
-        }
-        box.appendChild(quick8);
         return box;
       }
 
-      function setPassages(studentId, value) {
-        if (inputsLockedCorrected()) return; // hors fenêtre chrono
-        var v = Math.max(0, Math.min(MAX_PORTES, value));
-        ensureScore(studentId);
+      function setPassagesForSerie(studentId, serieIndex, value, markPorteChoisi) {
+        if (isEvalColumnGloballyLocked()) return;
         var pk = getPassageKey();
-        state.scores[studentId][pk].passages = v;
+        if (!canEditPortesForSerie(studentId, pk, serieIndex)) return;
+        rememberLastEvalEdit(studentId, pk);
+        var v = clampPorteVal(Math.min(MAX_PORTES_PICK, Math.max(0, value | 0)));
+        ensureScore(studentId);
+        var arr = state.scores[studentId][pk].passagesSeries;
+        if (!arr || arr.length < 5) {
+          state.scores[studentId][pk] = normalizePassageBlock(state.scores[studentId][pk]);
+          upgradeSerieTToCinqWhenBilanPlein(state.scores[studentId][pk]);
+          arr = state.scores[studentId][pk].passagesSeries;
+        }
+        arr[serieIndex] = v;
+        if (markPorteChoisi) {
+          ensurePassagesPorteChoisiOnBlock(state.scores[studentId][pk]);
+          state.scores[studentId][pk].passagesPorteChoisi[serieIndex] = true;
+        }
         saveStorage();
         renderEval();
       }
@@ -1507,9 +2453,9 @@
       // --- Résultats ------------------------------------------------------------
 
       function waveOfStudent(studentId) {
-        for (var wi = 0; wi < WAVE_LETTERS.length; wi++) {
-          var w = WAVE_LETTERS[wi];
-          if (state.waves[w].indexOf(studentId) >= 0) return w;
+        for (var wi = 0; wi < ALL_WAVE_LETTERS.length; wi++) {
+          var w = ALL_WAVE_LETTERS[wi];
+          if (state.waves[w] && state.waves[w].indexOf(studentId) >= 0) return w;
         }
         return '—';
       }
@@ -1519,47 +2465,49 @@
         if (!tbody) return;
         tbody.innerHTML = '';
 
+        function fmt1(v) {
+          return Number(v).toLocaleString('fr-FR', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1
+          });
+        }
+
         var rows = [];
         for (var i = 0; i < state.students.length; i++) {
           var s = state.students[i];
           ensureScore(s.id);
           var sc = state.scores[s.id];
-          var w = waveOfStudent(s.id);
+          var p1r = sumReussis(sc.p1.series);
+          var p1t = sumTentes(sc.p1.series);
+          var p2r = sumReussis(sc.p2.series);
+          var p2t = sumTentes(sc.p2.series);
+          var p1Rate = p1t > 0 ? p1r / p1t : 0;
+          var p2Rate = p2t > 0 ? p2r / p2t : 0;
+          var p1p = sumPassagesSeries(sc.p1.passagesSeries);
+          var p2p = sumPassagesSeries(sc.p2.passagesSeries);
           rows.push({
-            stu: s,
-            wave: w,
-            p1rt: sumReussis(sc.p1.series) + ' / ' + sumTentes(sc.p1.series),
-            p1p: sc.p1.passages,
-            p1g: globalScoreBlock(sc.p1),
-            p2rt: sumReussis(sc.p2.series) + ' / ' + sumTentes(sc.p2.series),
-            p2p: sc.p2.passages,
-            p2g: globalScoreBlock(sc.p2)
+            prenom: s.prenom,
+            avgTirPct: ((p1Rate + p2Rate) / 2) * 100,
+            totalR: p1r + p2r,
+            totalT: p1t + p2t,
+            avgPortes: (p1p + p2p) / 2,
+            p1rt: p1r + ' / ' + p1t,
+            p2rt: p2r + ' / ' + p2t
           });
         }
-        rows.sort(function (a, b) {
-          return b.p1g + b.p2g - (a.p1g + a.p2g);
-        });
+        rows.sort(function (a, b) { return a.prenom.localeCompare(b.prenom, 'fr'); });
 
         for (var j = 0; j < rows.length; j++) {
           var r = rows[j];
-          function addRow(passLabel, rtStr, pass, score) {
-            var tr = document.createElement('tr');
-            tr.innerHTML =
-              '<td>' + escapeHtml(r.stu.nom) + '</td>' +
-              '<td>' + escapeHtml(r.stu.prenom) + '</td>' +
-              '<td>' + r.wave + '</td>' +
-              '<td>' + passLabel + '</td>' +
-              '<td>' + rtStr + '</td>' +
-              '<td>' + pass + '</td>' +
-              '<td class="score-cell">' + score + '</td>';
-            var cell = tr.querySelector('.score-cell');
-            var maxPossible = 25 + MAX_PORTES;
-            if (score >= maxPossible * 0.7) cell.classList.add('good');
-            else if (score <= maxPossible * 0.35) cell.classList.add('bad');
-            tbody.appendChild(tr);
-          }
-          addRow('P1', r.p1rt, r.p1p, r.p1g);
-          addRow('P2', r.p2rt, r.p2p, r.p2g);
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + escapeHtml(r.prenom) + '</td>' +
+            '<td title="P1: ' + r.p1rt + ' | P2: ' + r.p2rt + '">' +
+              '<strong>' + fmt1(r.avgTirPct) + ' %</strong>' +
+              '<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">' + r.totalR + ' / ' + r.totalT + '</div>' +
+            '</td>' +
+            '<td><strong>' + fmt1(r.avgPortes) + '</strong></td>';
+          tbody.appendChild(tr);
         }
       }
 
@@ -1567,8 +2515,8 @@
       function exportCsv() {
         var head = [
           'Nom', 'Prenom', 'Vague', 'Passage',
-          'S1R', 'S1T', 'S2R', 'S2T', 'S3R', 'S3T', 'S4R', 'S4T', 'S5R', 'S5T',
-          'PortesCourse', 'TotalReussis', 'TotalTentes', 'ScoreGlobal'
+          'S1R', 'S1T', 'S1P', 'S2R', 'S2T', 'S2P', 'S3R', 'S3T', 'S3P', 'S4R', 'S4T', 'S4P', 'S5R', 'S5T', 'S5P',
+          'PortesTotal', 'TotalReussis', 'TotalTentes', 'ScoreGlobal'
         ];
         var lines = [head.join(';')];
         for (var i = 0; i < state.students.length; i++) {
@@ -1578,11 +2526,11 @@
           ['p1', 'p2'].forEach(function (pk) {
             var block = state.scores[s.id][pk];
             var passLabel = pk === 'p1' ? '1' : '2';
-            var cells = [s.nom, s.prenom, w, passLabel];
+            var cells = [stripLegacyDashNom(s.nom), s.prenom, w, passLabel];
             for (var si = 0; si < 5; si++) {
-              cells.push(block.series[si].r, block.series[si].t);
+              cells.push(block.series[si].r, block.series[si].t, clampPorteVal(block.passagesSeries[si]));
             }
-            cells.push(block.passages);
+            cells.push(sumPassagesSeries(block.passagesSeries));
             cells.push(sumReussis(block.series));
             cells.push(sumTentes(block.series));
             cells.push(globalScoreBlock(block));
@@ -1603,8 +2551,36 @@
       function closeModalResetWave() {
         var m = document.getElementById('modal-reset-wave');
         if (m) m.classList.add('hidden');
-        document.body.style.overflow = '';
         resetWaveModalStep = 0;
+        var timerM = document.getElementById('modal-reset-timer');
+        if (!timerM || timerM.classList.contains('hidden')) {
+          document.body.style.overflow = '';
+        }
+      }
+
+      function closeModalResetTimer() {
+        var m = document.getElementById('modal-reset-timer');
+        if (m) m.classList.add('hidden');
+        var waveM = document.getElementById('modal-reset-wave');
+        if (!waveM || waveM.classList.contains('hidden')) {
+          document.body.style.overflow = '';
+        }
+      }
+
+      function openModalResetTimer() {
+        closeModalResetWave();
+        var m = document.getElementById('modal-reset-timer');
+        if (!m) return;
+        var msg = document.getElementById('modal-reset-timer-msg');
+        if (msg) {
+          msg.textContent =
+            'Le chrono repassera à 3:00. Si une vague est en cours, elle sera arrêtée et l’affichage « fin de vague » (diodes à côté des prénoms) sera réinitialisé.\n\n' +
+            'Les saisies tirs et portes ne sont pas effacées ici — utilisez « Réinitialiser la vague » pour remettre les scores à zéro.';
+        }
+        m.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        var c = document.getElementById('modal-reset-timer-confirm');
+        if (c) c.focus();
       }
 
       function applyModalResetWaveStep1() {
@@ -1641,6 +2617,7 @@
       }
 
       function openModalResetWave() {
+        closeModalResetTimer();
         var m = document.getElementById('modal-reset-wave');
         if (!m) return;
         applyModalResetWaveStep1();
@@ -1653,22 +2630,26 @@
       // --- Onglets --------------------------------------------------------------
 
       function showTab(name) {
+        if (name !== 'setup') exitPrepBulkDeleteMode();
         document.getElementById('tab-setup').classList.toggle('hidden', name !== 'setup');
         document.getElementById('tab-eval').classList.toggle('hidden', name !== 'eval');
         document.getElementById('tab-results').classList.toggle('hidden', name !== 'results');
+        document.body.setAttribute('data-screen', name);
         var toolbarEval = document.getElementById('toolbar-eval-only');
         if (toolbarEval) {
           var onEval = name === 'eval';
           toolbarEval.classList.toggle('hidden', !onEval);
           toolbarEval.setAttribute('aria-hidden', onEval ? 'false' : 'true');
         }
-        var tabs = document.querySelectorAll('.tab[data-tab]');
-        for (var i = 0; i < tabs.length; i++) {
-          tabs[i].classList.toggle('active', tabs[i].getAttribute('data-tab') === name);
-        }
         if (name === 'eval') {
+          syncWaveCountSelect();
+          renderWaveUiVisibility();
           tickTimer();
           renderEval();
+        }
+        if (name === 'setup') {
+          syncWaveCountSelect();
+          renderWaveUiVisibility();
         }
         if (name === 'results') renderResults();
       }
@@ -1676,10 +2657,17 @@
       // --- Initialisation des écouteurs -----------------------------------------
 
       function bindUi() {
-        document.querySelectorAll('.tab[data-tab]').forEach(function (t) {
-          t.addEventListener('click', function () {
-            showTab(t.getAttribute('data-tab'));
-          });
+        document.getElementById('btn-go-eval-from-prep').addEventListener('click', function () {
+          showTab('eval');
+        });
+        document.getElementById('btn-back-to-prep').addEventListener('click', function () {
+          showTab('setup');
+        });
+        document.getElementById('btn-go-results').addEventListener('click', function () {
+          showTab('results');
+        });
+        document.getElementById('btn-back-to-eval-from-results').addEventListener('click', function () {
+          showTab('eval');
         });
 
         document.getElementById('csv-file').addEventListener('change', function (e) {
@@ -1692,6 +2680,7 @@
               alert('Aucun élève détecté. Vérifiez le format Nom;Prénom.');
               return;
             }
+            if (state.prepBulkDeleteMode) exitPrepBulkDeleteMode();
             state.students = state.students.concat(list);
             list.forEach(function (s) { ensureScore(s.id); });
             renderAllPools();
@@ -1701,21 +2690,34 @@
           e.target.value = '';
         });
 
-        document.getElementById('btn-sample').addEventListener('click', function () {
-          var demo = 'Nom;Prénom\nDupont;Alice\nMartin;Bruno\nBernard;Chloé\nPetit;David\nRobert;Eva';
-          var list = importCsvText(demo);
-          state.students = state.students.concat(list);
-          list.forEach(function (s) { ensureScore(s.id); });
-          renderAllPools();
-          saveStorage();
+        document.getElementById('btn-bulk-delete-students').addEventListener('click', function () {
+          if (state.prepBulkDeleteMode) {
+            exitPrepBulkDeleteMode();
+          } else {
+            state.prepBulkDeleteMode = true;
+            state.prepStudentIdsMarkedForDelete = {};
+            updatePrepBulkDeleteBar();
+            renderAllPools();
+          }
+        });
+        document.getElementById('prep-bulk-delete-cancel').addEventListener('click', function () {
+          exitPrepBulkDeleteMode();
+        });
+        document.getElementById('prep-bulk-delete-confirm').addEventListener('click', function () {
+          applyPrepBulkDelete();
         });
 
         document.getElementById('btn-clear-students').addEventListener('click', function () {
+          if (state.prepBulkDeleteMode) exitPrepBulkDeleteMode();
           if (!confirm('Supprimer tous les élèves et vagues ?')) return;
+          state.prepBulkDeleteMode = false;
+          state.prepStudentIdsMarkedForDelete = {};
           state.students = [];
-          state.waves = { A: [], B: [], C: [], D: [], E: [], F: [] };
+          state.waves = emptyWavesFull();
           state.scores = {};
           state.postWaveDiodesSummary = false;
+          state.postTimerEditableSerieByStudent = null;
+          updatePrepBulkDeleteBar();
           renderAllPools();
           renderEval();
           renderResults();
@@ -1730,6 +2732,23 @@
           });
         });
 
+        document.getElementById('wave-count').addEventListener('change', function () {
+          if (state.prepBulkDeleteMode) exitPrepBulkDeleteMode();
+          var n = parseInt(this.value, 10);
+          if (isNaN(n)) return;
+          n = Math.max(MIN_WAVES, Math.min(MAX_WAVES, n));
+          if (n === state.waveCount) return;
+          state.waveCount = n;
+          pruneWavesBeyondCount();
+          ensureActiveAndTargetWavesValid();
+          renderAllPools();
+          updatePrepTargetVisual();
+          highlightActiveWaveTabs();
+          renderEval();
+          renderResults();
+          saveStorage();
+        });
+
         document.querySelectorAll('[data-select-wave]').forEach(function (b) {
           b.addEventListener('click', function () {
             state.activeWave = /** @type {WaveId} */ (b.getAttribute('data-select-wave'));
@@ -1740,10 +2759,31 @@
         });
 
         document.getElementById('btn-start-wave').addEventListener('click', function () {
+          if (isTimerRunning()) return;
           startTimer();
         });
         document.getElementById('btn-reset-timer').addEventListener('click', function () {
+          openModalResetTimer();
+        });
+
+        var modalResetTimer = document.getElementById('modal-reset-timer');
+        var modalResetTimerInner = document.getElementById('modal-reset-timer-inner');
+        if (modalResetTimer) {
+          modalResetTimer.addEventListener('click', function () {
+            closeModalResetTimer();
+          });
+        }
+        if (modalResetTimerInner) {
+          modalResetTimerInner.addEventListener('click', function (e) {
+            e.stopPropagation();
+          });
+        }
+        document.getElementById('modal-reset-timer-cancel').addEventListener('click', function () {
+          closeModalResetTimer();
+        });
+        document.getElementById('modal-reset-timer-confirm').addEventListener('click', function () {
           resetTimer();
+          closeModalResetTimer();
         });
 
         document.getElementById('btn-reset-wave-scores').addEventListener('click', function () {
@@ -1753,6 +2793,9 @@
             return;
           }
           openModalResetWave();
+        });
+        document.getElementById('btn-undo-last-eval').addEventListener('click', function () {
+          undoLastEvalEdit();
         });
 
         var modalResetWave = document.getElementById('modal-reset-wave');
@@ -1786,6 +2829,12 @@
 
         document.addEventListener('keydown', function (ev) {
           if (ev.key !== 'Escape') return;
+          var mt = document.getElementById('modal-reset-timer');
+          if (mt && !mt.classList.contains('hidden')) {
+            ev.preventDefault();
+            closeModalResetTimer();
+            return;
+          }
           var m = document.getElementById('modal-reset-wave');
           if (m && !m.classList.contains('hidden')) {
             ev.preventDefault();
@@ -1820,6 +2869,7 @@
             alert('Aucune ligne reconnue. Saisissez au moins un prénom ou une ligne Nom;Prénom.');
             return;
           }
+          if (state.prepBulkDeleteMode) exitPrepBulkDeleteMode();
           for (var i = 0; i < list.length; i++) {
             state.students.push(list[i]);
             ensureScore(list[i].id);
@@ -1856,6 +2906,7 @@
       function boot() {
         loadStorage();
         bindUi();
+        showTab('setup');
         updatePassageUi();
         if (state.timerPausedLeftMs == null && state.timerEndAt == null) {
           state.timerPausedLeftMs = DURATION_MS;
@@ -1881,6 +2932,17 @@
 
         setInterval(saveStorage, 30000);
       }
+
+      function registerServiceWorker() {
+        if (!("serviceWorker" in navigator)) return;
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("./sw.js").catch(function (err) {
+            console.warn("Service Worker non enregistre", err);
+          });
+        });
+      }
+
+      registerServiceWorker();
 
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', boot);
